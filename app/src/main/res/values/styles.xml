@@ -21,11 +21,4 @@
     <style name="AppTheme.Toolbar" parent="ThemeOverlay.AppCompat.ActionBar" />
 
 
-    <style name="MyAppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="colorPrimary">@android:color/transparent</item>
-        <item name="colorAccent">@color/colorAccent</item>
-        <item name="windowActionBarOverlay">true</item>
-        <item name="android:statusBarColor">@android:color/transparent</item>
-    </style>
-
 </resources>

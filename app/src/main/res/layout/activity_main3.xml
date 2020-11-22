@@ -15,7 +15,6 @@
         app:elevation="0dp">
 
         <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             app:popupTheme="@style/AppTheme.PopupOverlay"
@@ -40,7 +39,6 @@
                 android:orientation="vertical">
 
                 <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-                    android:id="@+id/profile_image"
                     android:layout_width="84dp"
                     android:layout_height="84dp"
                     android:layout_marginLeft="16dp"
@@ -306,7 +304,6 @@
         </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/favorite"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -326,7 +323,6 @@
             android:weightSum="100">
 
             <LinearLayout
-                android:id="@+id/home_linear_layout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="50"
