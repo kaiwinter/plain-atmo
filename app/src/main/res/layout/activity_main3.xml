@@ -24,17 +24,28 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="24dp"
-                    android:layout_marginLeft="24dp"
                     android:orientation="horizontal"
                     android:weightSum="100">
+
                     <TextView
                         android:id="@+id/module1Name"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text=""
-                        android:textSize="20dp"/>
+                        android:textAllCaps="true"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/livingTimestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom"
+                        android:gravity="bottom"
+                        android:layout_marginStart="10dp"
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -50,10 +61,10 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="8dp"
+                        android:layout_weight="50"
+                        app:cardBackgroundColor="#f9f9f9"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
-                        app:cardBackgroundColor="#ffc6c6"
-                        android:layout_weight="50"
                         app:cardUseCompatPadding="true"
                         app:contentPadding="16dp">
 
@@ -69,15 +80,15 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:text=""
-                                android:textSize="40dp"/>
+                                android:textSize="40dp" />
 
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
+                                android:layout_marginTop="16dp"
                                 android:fontFamily="@font/calibri"
                                 android:text="Temperatur"
-                                android:layout_marginTop="16dp"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -134,27 +145,34 @@
                     android:layout_marginLeft="24dp"
                     android:orientation="horizontal"
                     android:weightSum="100">
-                    <TextView
-                        android:id="@+id/livingTimestamp"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:text=""/>
+
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_marginLeft="24dp"
                     android:layout_marginTop="16dp"
                     android:layout_marginRight="24dp"
-                    android:layout_marginLeft="24dp"
                     android:orientation="horizontal"
                     android:weightSum="100">
+
                     <TextView
                         android:id="@+id/module2Name"
-                        android:layout_width="match_parent"
+                        android:layout_width="wrap_content"
                         android:layout_height="match_parent"
                         android:text=""
-                        android:textSize="20dp"/>
+                        android:textAllCaps="true"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/sleepingTimestamp"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="bottom"
+                        android:gravity="bottom"
+                        android:layout_marginStart="10dp"
+                        android:text="" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -172,7 +190,7 @@
                         android:layout_marginRight="8dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
-                        app:cardBackgroundColor="#f9f9f9"
+                        app:cardBackgroundColor="#ffc6c6"
                         android:layout_weight="50"
                         app:cardUseCompatPadding="true"
                         app:contentPadding="16dp">
@@ -182,19 +200,21 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                            <TextView
+                                android:id="@+id/sleepingTemperature"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
-                                android:src="@drawable/chair_light_gray_bg" />
+                                android:text=""
+                                android:textSize="40dp"/>
 
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Best Chairs"
+                                android:text="Temperatur"
                                 android:layout_marginTop="16dp"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
@@ -209,7 +229,7 @@
                         android:layout_marginLeft="8dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
-                        app:cardBackgroundColor="#a4bdff"
+                        app:cardBackgroundColor="#f9f9f9"
                         android:layout_weight="50"
                         app:cardUseCompatPadding="true"
                         app:contentPadding="16dp">
@@ -219,19 +239,21 @@
                             android:layout_height="wrap_content"
                             android:orientation="vertical">
 
-                            <ImageView
-                                android:layout_width="40dp"
-                                android:layout_height="40dp"
+                            <TextView
+                                android:id="@+id/sleepingHumidity"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
-                                android:src="@drawable/plant_light_blue_bg" />
+                                android:text=""
+                                android:textSize="40dp"/>
 
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Plant Choice"
+                                android:text="Luftfeuchtigkeit"
                                 android:layout_marginTop="16dp"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />

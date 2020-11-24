@@ -8,6 +8,7 @@ import android.widget.TextView;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -27,6 +28,10 @@ public class Main3Activity extends AppCompatActivity {
     private TextView livingTemperature;
     private TextView livingTimestamp;
     private TextView livingHumidity;
+    private TextView sleepingTemperature;
+    private TextView sleepingTimestamp;
+    private TextView sleepingHumidity;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +44,10 @@ public class Main3Activity extends AppCompatActivity {
         livingTemperature = findViewById(R.id.livingTemperature);
         livingTimestamp = findViewById(R.id.livingTimestamp);
         livingHumidity = findViewById(R.id.livingHumidity);
+
+        sleepingTemperature = findViewById(R.id.sleepingTemperature);
+        sleepingTimestamp = findViewById(R.id.sleepingTimestamp);
+        sleepingHumidity = findViewById(R.id.sleepingHumidity);
     }
 
     @Override
@@ -59,12 +68,12 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void getdata() {
-        String clientId = "";
-        String clientSecret = "";
+        String clientId = getString(R.string.client_id);
+        String clientSecret = getString(R.string.client_secret);
 
         NetatmoHttpClient client = new NetatmoHttpClient(clientId, clientSecret);
-        String email = "";
-        String password = "";
+        String email = getString(R.string.email);
+        String password = getString(R.string.password);
         client.login(email, password);
 
         List<Station> stationsData = client.getStationsData(null, null);
@@ -77,6 +86,9 @@ public class Main3Activity extends AppCompatActivity {
         calendar.add(Calendar.MINUTE, -15);
         Date minus15mins = calendar.getTime();
 
+        List<DisplayInfo> displayInfos = new ArrayList<>();
+
+        int moduleCounter = 1;
         for (Module module : station.getModules()) {
             List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_MAX, minus15mins, null, null, null);
 
@@ -86,31 +98,34 @@ public class Main3Activity extends AppCompatActivity {
 
             Measures measurement = measures.get(measures.size()-1);
 
-            DisplayInfo module1 = new DisplayInfo();
-            module1.moduleName = module.getName();
-            module1.beginTime = measurement.getBeginTime();
-            module1.temperature = measurement.getTemperature();
-            module1.humidity = measurement.getHumidity();
-            module1.co2 = measurement.getCO2();
+            DisplayInfo displayInfo = new DisplayInfo();
+            displayInfo.moduleName = module.getName();
+            displayInfo.beginTime = measurement.getBeginTime();
+            displayInfo.temperature = measurement.getTemperature();
+            displayInfo.humidity = measurement.getHumidity();
+            displayInfo.co2 = measurement.getCO2();
 
-            showInfo(module1);
+            showInfo(moduleCounter, displayInfo);
+            moduleCounter++;
         }
-        System.out.println("Main.main()");
     }
 
-    private void showInfo(final DisplayInfo module1) {
+    private void showInfo(final int moduleCounter, final DisplayInfo displayInfo) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                module1Name.setText(module1.moduleName);
-
-                livingTemperature.setText(String.valueOf(module1.temperature));
-                Date date = new Date(module1.beginTime);
-                DateFormat formatter = SimpleDateFormat.getDateTimeInstance();
-                formatter.setTimeZone(TimeZone.getTimeZone("+2"));
-                livingTimestamp.setText(formatter.format(date));
-                livingHumidity.setText(String.valueOf(module1.humidity));
+                if (moduleCounter == 1) {
+                    module1Name.setText(displayInfo.moduleName);
+                    livingTemperature.setText(String.valueOf(displayInfo.temperature));
+                    livingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
+                    livingHumidity.setText(String.valueOf(displayInfo.humidity));
+                } else {
+                    module2Name.setText(displayInfo.moduleName);
+                    sleepingTemperature.setText(String.valueOf(displayInfo.temperature));
+                    sleepingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
+                    sleepingHumidity.setText(String.valueOf(displayInfo.humidity));
+                }
             }
         });
     }
@@ -121,5 +136,11 @@ public class Main3Activity extends AppCompatActivity {
         double temperature;
         double humidity;
         double co2;
+
+        public String getBeginTimeAsString() {
+            Date date = new Date(beginTime);
+            DateFormat formatter = SimpleDateFormat.getTimeInstance(3);
+            return formatter.format(date);
+        }
     }
 }
