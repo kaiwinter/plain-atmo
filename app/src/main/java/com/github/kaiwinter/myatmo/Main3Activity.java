@@ -1,4 +1,4 @@
-package com.shashank.platform.furnitureecommerceappui;
+package com.github.kaiwinter.myatmo;
 
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
@@ -32,7 +32,6 @@ public class Main3Activity extends AppCompatActivity {
     private TextView sleepingTimestamp;
     private TextView sleepingHumidity;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,18 +52,17 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+
+        new Thread(new Runnable() {
+            public void run() {
+                getdata();
+            }
+        }).start();
     }
 
     @Override
     protected void onPostCreate(@Nullable Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
-
-        new Thread(new Runnable() {
-            public void run() {
-                // a potentially time consuming task
-                getdata();
-            }
-        }).start();
     }
 
     private void getdata() {
