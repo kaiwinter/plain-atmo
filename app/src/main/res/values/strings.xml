@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">myatmo</string>
+    <string name="display_temperature">%1$,.1f°</string>
+    <string name="display_timestamp">(%1$s Uhr)</string>
+    <string name="display_humidity">%1$,.0f%%</string>
+    <string name="display_co2">%1$,.0fppm</string>
 </resources>

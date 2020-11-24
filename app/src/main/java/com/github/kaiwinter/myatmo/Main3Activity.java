@@ -133,15 +133,15 @@ public class Main3Activity extends AppCompatActivity {
             public void run() {
                 if (displayInfo.moduleType == DisplayInfo.ModuleType.INDOOR) {
                     module1Name.setText(displayInfo.moduleName);
-                    livingTemperature.setText(String.valueOf(displayInfo.temperature) + "°");
-                    livingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
-                    livingHumidity.setText(String.format("%.0f", displayInfo.humidity) + "%");
-                    livingCo2.setText(String.format("%.0f", displayInfo.co2) + "ppm");
+                    livingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
+                    livingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
+                    livingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
+                    livingCo2.setText(getString(R.string.display_co2, displayInfo.co2));
                 } else if (displayInfo.moduleType == DisplayInfo.ModuleType.OUTDOOR) {
                     module2Name.setText(displayInfo.moduleName);
-                    sleepingTemperature.setText(String.valueOf(displayInfo.temperature) + "°");
-                    sleepingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
-                    sleepingHumidity.setText(String.format("%.0f", displayInfo.humidity) + "%");
+                    sleepingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
+                    sleepingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
+                    sleepingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
                 } else {
                     throw new IllegalArgumentException("Not supported module type: " + displayInfo.moduleType);
                 }
