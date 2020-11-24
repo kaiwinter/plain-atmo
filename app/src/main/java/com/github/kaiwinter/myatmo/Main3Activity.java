@@ -1,12 +1,15 @@
 package com.github.kaiwinter.myatmo;
 
 import android.support.annotation.Nullable;
+import android.support.design.widget.FloatingActionButton;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
 import java.text.DateFormat;
+import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -28,6 +31,7 @@ public class Main3Activity extends AppCompatActivity {
     private TextView livingTemperature;
     private TextView livingTimestamp;
     private TextView livingHumidity;
+    private TextView livingCo2;
     private TextView sleepingTemperature;
     private TextView sleepingTimestamp;
     private TextView sleepingHumidity;
@@ -43,10 +47,19 @@ public class Main3Activity extends AppCompatActivity {
         livingTemperature = findViewById(R.id.livingTemperature);
         livingTimestamp = findViewById(R.id.livingTimestamp);
         livingHumidity = findViewById(R.id.livingHumidity);
+        livingCo2 = findViewById(R.id.livingCo2);
 
         sleepingTemperature = findViewById(R.id.sleepingTemperature);
         sleepingTimestamp = findViewById(R.id.sleepingTimestamp);
         sleepingHumidity = findViewById(R.id.sleepingHumidity);
+
+        FloatingActionButton fab = findViewById(R.id.refreshButton);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                onResume();
+            }
+        });
     }
 
     @Override
@@ -79,14 +92,12 @@ public class Main3Activity extends AppCompatActivity {
 
         List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
 
-
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MINUTE, -15);
         Date minus15mins = calendar.getTime();
 
         List<DisplayInfo> displayInfos = new ArrayList<>();
 
-        int moduleCounter = 1;
         for (Module module : station.getModules()) {
             List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_MAX, minus15mins, null, null, null);
 
@@ -101,35 +112,50 @@ public class Main3Activity extends AppCompatActivity {
             displayInfo.beginTime = measurement.getBeginTime();
             displayInfo.temperature = measurement.getTemperature();
             displayInfo.humidity = measurement.getHumidity();
-            displayInfo.co2 = measurement.getCO2();
 
-            showInfo(moduleCounter, displayInfo);
-            moduleCounter++;
+            if (module.getType().equals(Module.TYPE_INDOOR)) {
+                displayInfo.co2 = measurement.getCO2();
+                displayInfo.moduleType = DisplayInfo.ModuleType.INDOOR;
+            } else if (module.getType().equals(Module.TYPE_OUTDOOR)) {
+                displayInfo.moduleType = DisplayInfo.ModuleType.OUTDOOR;
+            } else {
+                throw new IllegalArgumentException("Not supported module type: " + module.getType());
+            }
+
+            showInfo(displayInfo);
         }
     }
 
-    private void showInfo(final int moduleCounter, final DisplayInfo displayInfo) {
+    private void showInfo(final DisplayInfo displayInfo) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                if (moduleCounter == 1) {
+                if (displayInfo.moduleType == DisplayInfo.ModuleType.INDOOR) {
                     module1Name.setText(displayInfo.moduleName);
-                    livingTemperature.setText(String.valueOf(displayInfo.temperature));
+                    livingTemperature.setText(String.valueOf(displayInfo.temperature) + "°");
                     livingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
-                    livingHumidity.setText(String.valueOf(displayInfo.humidity));
-                } else {
+                    livingHumidity.setText(String.format("%.0f", displayInfo.humidity) + "%");
+                    livingCo2.setText(String.format("%.0f", displayInfo.co2) + "ppm");
+                } else if (displayInfo.moduleType == DisplayInfo.ModuleType.OUTDOOR) {
                     module2Name.setText(displayInfo.moduleName);
-                    sleepingTemperature.setText(String.valueOf(displayInfo.temperature));
+                    sleepingTemperature.setText(String.valueOf(displayInfo.temperature) + "°");
                     sleepingTimestamp.setText("(" + displayInfo.getBeginTimeAsString() + " Uhr)");
-                    sleepingHumidity.setText(String.valueOf(displayInfo.humidity));
+                    sleepingHumidity.setText(String.format("%.0f", displayInfo.humidity) + "%");
+                } else {
+                    throw new IllegalArgumentException("Not supported module type: " + displayInfo.moduleType);
                 }
             }
         });
     }
 
     private static class DisplayInfo {
+        enum ModuleType {
+            INDOOR, OUTDOOR
+        }
+
         String moduleName;
+        ModuleType moduleType;
         long beginTime;
         double temperature;
         double humidity;

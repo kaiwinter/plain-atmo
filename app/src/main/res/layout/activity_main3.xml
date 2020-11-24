@@ -80,13 +80,12 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:text=""
-                                android:textSize="40dp" />
+                                android:textSize="25sp" />
 
 
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
-                                android:layout_marginTop="16dp"
                                 android:fontFamily="@font/calibri"
                                 android:text="Temperatur"
                                 android:textColor="#3C3C3C"
@@ -119,7 +118,7 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:text=""
-                                android:textSize="40dp"/>
+                                android:textSize="25sp"/>
 
 
                             <TextView
@@ -127,7 +126,55 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
                                 android:text="Luftfeuchtigkeit"
-                                android:layout_marginTop="16dp"
+                                android:textColor="#3C3C3C"
+                                android:textSize="16sp" />
+
+                        </LinearLayout>
+
+                    </android.support.v7.widget.CardView>
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:layout_marginRight="24dp"
+                    android:layout_marginLeft="24dp"
+                    android:orientation="horizontal"
+                    android:weightSum="100">
+
+                    <android.support.v7.widget.CardView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="8dp"
+                        android:layout_weight="50"
+                        app:cardBackgroundColor="#f9f9f9"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true"
+                        app:contentPadding="16dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:id="@+id/livingCo2"
+                                android:layout_width="match_parent"
+                                android:layout_height="match_parent"
+                                android:layout_marginTop="8dp"
+                                android:layout_marginBottom="8dp"
+                                android:text=""
+                                android:textSize="25sp" />
+
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:fontFamily="@font/calibri"
+                                android:text="CO2"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -190,7 +237,7 @@
                         android:layout_marginRight="8dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
-                        app:cardBackgroundColor="#ffc6c6"
+                        app:cardBackgroundColor="#f9f9f9"
                         android:layout_weight="50"
                         app:cardUseCompatPadding="true"
                         app:contentPadding="16dp">
@@ -207,7 +254,7 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:text=""
-                                android:textSize="40dp"/>
+                                android:textSize="25sp"/>
 
 
                             <TextView
@@ -215,7 +262,6 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
                                 android:text="Temperatur"
-                                android:layout_marginTop="16dp"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -246,7 +292,7 @@
                                 android:layout_marginTop="8dp"
                                 android:layout_marginBottom="8dp"
                                 android:text=""
-                                android:textSize="40dp"/>
+                                android:textSize="25sp"/>
 
 
                             <TextView
@@ -254,7 +300,6 @@
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
                                 android:text="Luftfeuchtigkeit"
-                                android:layout_marginTop="16dp"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -270,12 +315,13 @@
         </ScrollView>
 
         <android.support.design.widget.FloatingActionButton
+            android:id="@+id/refreshButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:layout_marginBottom="24dp"
-            android:src="@drawable/ic_person_white_24dp"
+            android:src="@drawable/ic_refresh_24px"
             app:fabSize="normal" />
 
     </RelativeLayout>
