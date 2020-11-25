@@ -67,17 +67,11 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-
         new Thread(new Runnable() {
             public void run() {
                 getdata();
             }
         }).start();
-    }
-
-    @Override
-    protected void onPostCreate(@Nullable Bundle savedInstanceState) {
-        super.onPostCreate(savedInstanceState);
     }
 
     private boolean isOffline() {
