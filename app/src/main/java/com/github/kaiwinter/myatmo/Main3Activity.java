@@ -1,20 +1,18 @@
 package com.github.kaiwinter.myatmo;
 
 import android.os.Looper;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
+
+import com.github.kaiwinter.myatmo.databinding.ActivityMain3Binding;
 import com.google.android.material.snackbar.Snackbar;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.View;
-import android.widget.TextView;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
@@ -28,38 +26,16 @@ import losty.netatmo.model.Station;
 
 public class Main3Activity extends AppCompatActivity {
 
-    private TextView module1Name;
-    private TextView module2Name;
-    private TextView livingTemperature;
-    private TextView livingTimestamp;
-    private TextView livingHumidity;
-    private TextView livingCo2;
-    private TextView sleepingTemperature;
-    private TextView sleepingTimestamp;
-    private TextView sleepingHumidity;
-    private View loadingIndicator;
+    private ActivityMain3Binding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main3);
         getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        binding = ActivityMain3Binding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        module1Name = findViewById(R.id.module1Name);
-        module2Name = findViewById(R.id.module2Name);
-        livingTemperature = findViewById(R.id.livingTemperature);
-        livingTimestamp = findViewById(R.id.livingTimestamp);
-        livingHumidity = findViewById(R.id.livingHumidity);
-        livingCo2 = findViewById(R.id.livingCo2);
-
-        sleepingTemperature = findViewById(R.id.sleepingTemperature);
-        sleepingTimestamp = findViewById(R.id.sleepingTimestamp);
-        sleepingHumidity = findViewById(R.id.sleepingHumidity);
-
-        loadingIndicator = findViewById(R.id.loadingIndicator);
-
-        FloatingActionButton fab = findViewById(R.id.refreshButton);
-        fab.setOnClickListener(new View.OnClickListener() {
+        binding.refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onResume();
@@ -111,8 +87,6 @@ public class Main3Activity extends AppCompatActivity {
         calendar.add(Calendar.MINUTE, -15);
         Date minus15mins = calendar.getTime();
 
-        List<DisplayInfo> displayInfos = new ArrayList<>();
-
         for (Module module : station.getModules()) {
             List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_MAX, minus15mins, null, null, null);
 
@@ -144,12 +118,12 @@ public class Main3Activity extends AppCompatActivity {
 
     private void changeLoadingIndicatorVisibility(final int visibility) {
         if (onUiThread()) {
-            loadingIndicator.setVisibility(visibility);
+            binding.loadingIndicator.setVisibility(visibility);
         } else {
             runOnUiThread(new Runnable() {
                 @Override
                 public void run() {
-                    loadingIndicator.setVisibility(visibility);
+                    binding.loadingIndicator.setVisibility(visibility);
                 }
             });
         }
@@ -165,16 +139,16 @@ public class Main3Activity extends AppCompatActivity {
             @Override
             public void run() {
                 if (displayInfo.moduleType == DisplayInfo.ModuleType.INDOOR) {
-                    module1Name.setText(displayInfo.moduleName);
-                    livingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
-                    livingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
-                    livingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
-                    livingCo2.setText(getString(R.string.display_co2, displayInfo.co2));
+                    binding.module1Name.setText(displayInfo.moduleName);
+                    binding.livingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
+                    binding.livingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
+                    binding.livingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
+                    binding.livingCo2.setText(getString(R.string.display_co2, displayInfo.co2));
                 } else if (displayInfo.moduleType == DisplayInfo.ModuleType.OUTDOOR) {
-                    module2Name.setText(displayInfo.moduleName);
-                    sleepingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
-                    sleepingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
-                    sleepingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
+                    binding.module2Name.setText(displayInfo.moduleName);
+                    binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
+                    binding.sleepingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
+                    binding.sleepingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
                 }
             }
         });
