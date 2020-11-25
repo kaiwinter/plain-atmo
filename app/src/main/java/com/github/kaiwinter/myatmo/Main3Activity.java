@@ -83,7 +83,6 @@ public class Main3Activity extends AppCompatActivity {
             sock.connect(new InetSocketAddress("api.netatmo.net", 443), 1500);
             return false;
         } catch (IOException e) {
-            Log.w("myatmo", e.getMessage());
             return true;
         }
     }
