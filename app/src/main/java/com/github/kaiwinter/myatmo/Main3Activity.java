@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.TextView;
 
+import java.io.IOException;
+import java.net.InetSocketAddress;
+import java.net.Socket;
 import java.text.DateFormat;
-import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -78,7 +80,21 @@ public class Main3Activity extends AppCompatActivity {
         super.onPostCreate(savedInstanceState);
     }
 
+    private boolean isOffline() {
+        try (Socket sock = new Socket()) {
+            sock.connect(new InetSocketAddress("api.netatmo.net", 443), 1500);
+            return true;
+        } catch (IOException e) {
+            return false;
+        }
+    }
+
     private void getdata() {
+        if (isOffline()) {
+            Snackbar.make(Main3Activity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            return;
+        }
+
         String clientId = getString(R.string.client_id);
         String clientSecret = getString(R.string.client_secret);
 
