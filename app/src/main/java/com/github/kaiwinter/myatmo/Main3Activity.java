@@ -5,6 +5,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 
@@ -77,9 +78,10 @@ public class Main3Activity extends AppCompatActivity {
     private boolean isOffline() {
         try (Socket sock = new Socket()) {
             sock.connect(new InetSocketAddress("api.netatmo.net", 443), 1500);
-            return true;
-        } catch (IOException e) {
             return false;
+        } catch (IOException e) {
+            Log.w("myatmo", e.getMessage());
+            return true;
         }
     }
 
@@ -129,7 +131,7 @@ public class Main3Activity extends AppCompatActivity {
             } else if (module.getType().equals(Module.TYPE_OUTDOOR)) {
                 displayInfo.moduleType = DisplayInfo.ModuleType.OUTDOOR;
             } else {
-                throw new IllegalArgumentException("Not supported module type: " + module.getType());
+                // ignore, maybe extend later
             }
 
             showInfo(displayInfo);
@@ -152,8 +154,6 @@ public class Main3Activity extends AppCompatActivity {
                     sleepingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
                     sleepingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
                     sleepingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
-                } else {
-                    throw new IllegalArgumentException("Not supported module type: " + displayInfo.moduleType);
                 }
             }
         });
