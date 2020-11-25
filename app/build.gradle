@@ -3,7 +3,7 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 28
     defaultConfig {
-        applicationId "com.shashank.platform.furnitureecommerceappui"
+        applicationId "com.github.kaiwinter.myatmo"
         minSdkVersion 21
         targetSdkVersion 28
         versionCode 1
@@ -38,6 +38,7 @@ dependencies {
     implementation ('org.losty.netatmo:netatmo-api:0.6.0'){
         exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
     }
+    implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'
     testImplementation 'junit:junit:4.13.1'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'

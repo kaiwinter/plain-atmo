@@ -1,5 +1,6 @@
 package com.github.kaiwinter.myatmo;
 
+import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -38,6 +39,7 @@ public class Main3Activity extends AppCompatActivity {
     private TextView sleepingTemperature;
     private TextView sleepingTimestamp;
     private TextView sleepingHumidity;
+    private View loadingIndicator;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +58,8 @@ public class Main3Activity extends AppCompatActivity {
         sleepingTimestamp = findViewById(R.id.sleepingTimestamp);
         sleepingHumidity = findViewById(R.id.sleepingHumidity);
 
+        loadingIndicator = findViewById(R.id.loadingIndicator);
+
         FloatingActionButton fab = findViewById(R.id.refreshButton);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -68,6 +72,7 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        changeLoadingIndicatorVisibility(View.VISIBLE);
         new Thread(new Runnable() {
             public void run() {
                 getdata();
@@ -88,6 +93,7 @@ public class Main3Activity extends AppCompatActivity {
     private void getdata() {
         if (isOffline()) {
             Snackbar.make(Main3Activity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            changeLoadingIndicatorVisibility(View.INVISIBLE);
             return;
         }
 
@@ -136,6 +142,24 @@ public class Main3Activity extends AppCompatActivity {
 
             showInfo(displayInfo);
         }
+        changeLoadingIndicatorVisibility(View.INVISIBLE);
+    }
+
+    private void changeLoadingIndicatorVisibility(final int visibility) {
+        if (onUiThread()) {
+            loadingIndicator.setVisibility(visibility);
+        } else {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    loadingIndicator.setVisibility(visibility);
+                }
+            });
+        }
+    }
+
+    private boolean onUiThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
     private void showInfo(final DisplayInfo displayInfo) {
