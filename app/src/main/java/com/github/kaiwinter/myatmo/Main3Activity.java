@@ -73,10 +73,14 @@ public class Main3Activity extends AppCompatActivity {
         String clientId = getString(R.string.client_id);
         String clientSecret = getString(R.string.client_secret);
 
-        NetatmoHttpClient client = new NetatmoHttpClient(clientId, clientSecret);
-        String email = getString(R.string.email);
-        String password = getString(R.string.password);
-        client.login(email, password);
+        NetatmoHttpClient client = new NetatmoHttpClient(clientId, clientSecret, new SharedPreferencesTokenStore(this));
+        NetatmoHttpClient.OAuthStatus authStatus = client.getOAuthStatus();
+        if (authStatus == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
+            // FIXME KW: redirect to log in screen
+            String email = getString(R.string.email);
+            String password = getString(R.string.password);
+            client.login(email, password);
+        }
 
         List<Station> stationsData = client.getStationsData(null, null);
         Station station = stationsData.get(0);
