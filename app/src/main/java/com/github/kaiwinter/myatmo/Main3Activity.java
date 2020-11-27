@@ -47,7 +47,6 @@ public class Main3Activity extends AppCompatActivity {
         String clientSecret = getString(R.string.client_secret);
 
         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
-        tokenstore.setTokens(null, null, -1);
         client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
 
         binding.refreshButton.setOnClickListener(new View.OnClickListener() {
