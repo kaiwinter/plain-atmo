@@ -165,22 +165,26 @@ public class Main3Activity extends AppCompatActivity {
         }
         final String email = data.getStringExtra(MainActivity.EXTRA_EMAIL);
         final String password = data.getStringExtra(MainActivity.EXTRA_PASSWORD);
-        if (email != null || password != null) {
-            inLoginProcess.set(true);
-            new Thread(new Runnable() {
-                public void run() {
-                    try {
-                        client.login(email, password);
-                    } catch (NetatmoOAuthException e) {
-                        String error = ((OAuthProblemException) e.getCause()).getError();
-                        startLoginActivityWithErrorMessage(error);
-                    } finally {
-                        inLoginProcess.set(false);
-                        getdata();
-                    }
-                }
-            }).start();
+        if (email == null || password == null) {
+            return;
         }
+        if (email.length() == 0 || password.length() == 0) {
+            return;
+        }
+        inLoginProcess.set(true);
+        new Thread(new Runnable() {
+            public void run() {
+                try {
+                    client.login(email, password);
+                } catch (NetatmoOAuthException e) {
+                    String error = ((OAuthProblemException) e.getCause()).getError();
+                    startLoginActivityWithErrorMessage(error);
+                } finally {
+                    inLoginProcess.set(false);
+                    getdata();
+                }
+            }
+        }).start();
     }
 
     private void changeLoadingIndicatorVisibility(final int visibility) {

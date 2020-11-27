@@ -147,7 +147,7 @@
                     android:layout_margin="16dp"
                     android:background="@drawable/buttonshape"
                     android:fontFamily="@font/calibri"
-                    android:text="@string/login_login"
+                    android:text="@string/login_login_button"
                     android:textAllCaps="false"
                     android:textColor="#ffffff"
                     android:textSize="24sp" />

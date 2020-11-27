@@ -33,6 +33,10 @@ public class MainActivity extends AppCompatActivity {
         binding.login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                if (binding.username.getText().toString().length() == 0 && binding.password.getText().toString().length() == 0) {
+                    binding.error.setText(R.string.login_empty);
+                    return;
+                }
                 Intent intent = new Intent(getApplicationContext(), Main3Activity.class);
                 intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
                 intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());

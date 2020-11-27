@@ -1,8 +1,10 @@
 <resources>
     <string name="login_email">Mailadresse</string>
     <string name="login_password">Passwort</string>
-    <string name="login_login">Login</string>
+    <string name="login_login">Netatmo Login</string>
     <string name="login_login_error">Login Fehler: %1$s</string>
     <string name="temperature">Temperatur</string>
     <string name="humidity">Luftfeuchtigkeit</string>
+    <string name="login_login_button">Login</string>
+    <string name="login_empty">Mailadresse und Passwort dürfen nicht leer sein</string>
 </resources>
