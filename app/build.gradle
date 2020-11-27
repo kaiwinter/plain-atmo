@@ -39,7 +39,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation ('com.github.kaiwinter:netatmo-api:073cd97bd4'){
-        exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common';
+        exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
         exclude group:'org.json', module:'json'
     }
     implementation 'com.github.castorflex.smoothprogressbar:library:1.1.0'

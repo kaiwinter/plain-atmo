@@ -19,7 +19,7 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
                 android:orientation="vertical">
                 <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
                     android:id="@+id/loadingIndicator"
@@ -77,7 +77,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="50"
                         app:cardBackgroundColor="#f9f9f9"
                         app:cardCornerRadius="8dp"
@@ -115,7 +115,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
                         app:cardBackgroundColor="#f9f9f9"
@@ -164,7 +164,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
+                        android:layout_marginEnd="4dp"
                         android:layout_weight="50"
                         app:cardBackgroundColor="#f9f9f9"
                         app:cardCornerRadius="8dp"
@@ -204,19 +204,8 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginTop="16dp"
-                    android:layout_marginRight="24dp"
                     android:layout_marginLeft="24dp"
-                    android:orientation="horizontal"
-                    android:weightSum="100">
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginLeft="24dp"
-                    android:layout_marginTop="16dp"
+                    android:layout_marginTop="32dp"
                     android:layout_marginRight="24dp"
                     android:orientation="horizontal"
                     android:weightSum="100">
@@ -251,7 +240,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginRight="4dp"
+                        android:layout_marginEnd="4dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
                         app:cardBackgroundColor="#f9f9f9"
@@ -289,7 +278,7 @@
                     <androidx.cardview.widget.CardView
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="4dp"
+                        android:layout_marginStart="4dp"
                         app:cardCornerRadius="8dp"
                         app:cardElevation="4dp"
                         app:cardBackgroundColor="#f9f9f9"
@@ -341,7 +330,7 @@
             android:src="@drawable/ic_refresh_24px"
             app:fabSize="normal"
             android:backgroundTint="@color/colorPrimary"
-            app:borderWidth="0dp"/>
+            app:borderWidth="0dp" />
 
     </RelativeLayout>
 

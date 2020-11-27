@@ -12,7 +12,7 @@ public class SharedPreferencesTokenStore implements TokenStore {
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
     private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
-    private SharedPreferences sharedPreferences;
+    private final SharedPreferences sharedPreferences;
 
     SharedPreferencesTokenStore(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
@@ -24,7 +24,7 @@ public class SharedPreferencesTokenStore implements TokenStore {
         editor.putString(KEY_REFRESH_TOKEN, refreshToken);
         editor.putString(KEY_ACCESS_TOKEN, accessToken);
         editor.putLong(KEY_EXPIRES_AT, expiresAt);
-        editor.commit();
+        editor.apply();
     }
 
     @Override
