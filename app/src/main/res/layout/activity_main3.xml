@@ -104,7 +104,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Temperatur"
+                                android:text="@string/temperature"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -142,7 +142,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Luftfeuchtigkeit"
+                                android:text="@string/humidity"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -191,7 +191,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="CO2"
+                                android:text="@string/co2"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -278,7 +278,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Temperatur"
+                                android:text="@string/temperature"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 
@@ -316,7 +316,7 @@
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
                                 android:fontFamily="@font/calibri"
-                                android:text="Luftfeuchtigkeit"
+                                android:text="@string/humidity"
                                 android:textColor="#3C3C3C"
                                 android:textSize="16sp" />
 

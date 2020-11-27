@@ -25,7 +25,7 @@ public class MainActivity extends AppCompatActivity {
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String error = extras.getString(Main3Activity.EXTRA_LOGIN_ERROR);
-            binding.error.setText("Login error: " + error);
+            binding.error.setText(getString(R.string.login_login_error, error));
         }
 
         binding.login.setOnClickListener(new View.OnClickListener() {
