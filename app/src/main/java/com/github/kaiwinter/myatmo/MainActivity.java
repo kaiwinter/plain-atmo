@@ -9,6 +9,9 @@ import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 
 public class MainActivity extends AppCompatActivity {
 
+    static final String EXTRA_EMAIL = "EXTRA_EMAIL";
+    static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
+
     private ActivityMainBinding binding;
 
     @Override
@@ -19,13 +22,19 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        Bundle extras = getIntent().getExtras();
+        if (extras != null) {
+            String error = extras.getString(Main3Activity.EXTRA_LOGIN_ERROR);
+            binding.error.setText("Login error: " + error);
+        }
+
         binding.login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getApplicationContext(), Main3Activity.class);
-                intent.putExtra("email", binding.username.getText().toString());
-                intent.putExtra("password", binding.password.getText().toString());
-                setResult(1, intent);
+                intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
+                intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
+                setResult(0, intent);
                 finish();
             }
         });

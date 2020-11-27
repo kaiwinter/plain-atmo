@@ -11,6 +11,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 
+import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
@@ -20,6 +22,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import losty.netatmo.NetatmoHttpClient;
 import losty.netatmo.exceptions.NetatmoOAuthException;
@@ -30,11 +33,12 @@ import losty.netatmo.model.Station;
 
 public class Main3Activity extends AppCompatActivity {
 
-    public static final int REQUEST_CODE_LOGIN = 1;
-    public static final int REQUEST_CODE_LOGIN_ONERROR = 2;
+    static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
 
     private ActivityMain3Binding binding;
     private NetatmoHttpClient client;
+
+    private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,12 +51,17 @@ public class Main3Activity extends AppCompatActivity {
         String clientSecret = getString(R.string.client_secret);
 
         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
+        //tokenstore.setTokens(null, null, -1);
         client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
 
         binding.refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                getdata();
+                new Thread(new Runnable() {
+                    public void run() {
+                        getdata();
+                    }
+                }).start();
             }
         });
     }
@@ -127,24 +136,40 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void startLoginActivity() {
+        if (inLoginProcess.get()) {
+            return;
+        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivityForResult(intent, REQUEST_CODE_LOGIN);
+        startActivityForResult(intent, 0);
+    }
+
+    /**
+     * Called from a Runnable in onActivityResult() that calls the REST service to log-in.
+     * Meanwhile onResume() is called which triggers a startLoginActivity(), so the "inLoginProcess"-check is necessary only there.
+     * @param errorMessage Error message to show the user on the login screen
+     */
+    private void startLoginActivityWithErrorMessage(String errorMessage) {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra(EXTRA_LOGIN_ERROR, errorMessage);
+        startActivityForResult(intent, 0);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        final String email = data.getStringExtra("email");
-        final String password = data.getStringExtra("password");
+        final String email = data.getStringExtra(MainActivity.EXTRA_EMAIL);
+        final String password = data.getStringExtra(MainActivity.EXTRA_PASSWORD);
         if (email != null || password != null) {
+            inLoginProcess.set(true);
             new Thread(new Runnable() {
                 public void run() {
                     try {
                         client.login(email, password);
                     } catch (NetatmoOAuthException e) {
-                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                        intent.putExtra("error", e.getMessage());
-                        startActivityForResult(intent, REQUEST_CODE_LOGIN_ONERROR);
+                        String error = ((OAuthProblemException) e.getCause()).getError();
+                        startLoginActivityWithErrorMessage(error);
+                    } finally {
+                        inLoginProcess.set(false);
                     }
                 }
             }).start();

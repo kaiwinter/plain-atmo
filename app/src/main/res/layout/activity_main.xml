@@ -52,8 +52,17 @@
                         android:layout_height="4dp"
                         android:layout_gravity="center"
                         android:layout_marginTop="16dp"
-                        android:background="#ffc6c6"
-                        />
+                        android:background="#ffc6c6"/>
+
+                    <TextView
+                        android:id="@+id/error"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_marginLeft="16dp"
+                        android:layout_marginRight="16dp"
+                        android:layout_marginTop="16dp"
+                        android:textColor="#FFFFFF"
+                        android:textSize="16sp"/>
                 </LinearLayout>
 
                 <androidx.cardview.widget.CardView
