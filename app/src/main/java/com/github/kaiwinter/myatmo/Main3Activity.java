@@ -1,9 +1,12 @@
 package com.github.kaiwinter.myatmo;
 
+import android.content.Intent;
 import android.os.Looper;
 
 import com.github.kaiwinter.myatmo.databinding.ActivityMain3Binding;
 import com.google.android.material.snackbar.Snackbar;
+
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +22,7 @@ import java.util.Date;
 import java.util.List;
 
 import losty.netatmo.NetatmoHttpClient;
+import losty.netatmo.exceptions.NetatmoOAuthException;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Params;
@@ -26,7 +30,11 @@ import losty.netatmo.model.Station;
 
 public class Main3Activity extends AppCompatActivity {
 
+    public static final int REQUEST_CODE_LOGIN = 1;
+    public static final int REQUEST_CODE_LOGIN_ONERROR = 2;
+
     private ActivityMain3Binding binding;
+    private NetatmoHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,10 +43,17 @@ public class Main3Activity extends AppCompatActivity {
         binding = ActivityMain3Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        String clientId = getString(R.string.client_id);
+        String clientSecret = getString(R.string.client_secret);
+
+        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
+        tokenstore.setTokens(null, null, -1);
+        client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
+
         binding.refreshButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                onResume();
+                getdata();
             }
         });
     }
@@ -46,7 +61,6 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        changeLoadingIndicatorVisibility(View.VISIBLE);
         new Thread(new Runnable() {
             public void run() {
                 getdata();
@@ -64,23 +78,16 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void getdata() {
+        if (client.getOAuthStatus() == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
+            startLoginActivity();
+            return;
+        }
         if (isOffline()) {
             Snackbar.make(Main3Activity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             changeLoadingIndicatorVisibility(View.INVISIBLE);
             return;
         }
-
-        String clientId = getString(R.string.client_id);
-        String clientSecret = getString(R.string.client_secret);
-
-        NetatmoHttpClient client = new NetatmoHttpClient(clientId, clientSecret, new SharedPreferencesTokenStore(this));
-        NetatmoHttpClient.OAuthStatus authStatus = client.getOAuthStatus();
-        if (authStatus == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
-            // FIXME KW: redirect to log in screen
-            String email = getString(R.string.email);
-            String password = getString(R.string.password);
-            client.login(email, password);
-        }
+        changeLoadingIndicatorVisibility(View.VISIBLE);
 
         List<Station> stationsData = client.getStationsData(null, null);
         Station station = stationsData.get(0);
@@ -118,6 +125,31 @@ public class Main3Activity extends AppCompatActivity {
             showInfo(displayInfo);
         }
         changeLoadingIndicatorVisibility(View.INVISIBLE);
+    }
+
+    private void startLoginActivity() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        startActivityForResult(intent, REQUEST_CODE_LOGIN);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        final String email = data.getStringExtra("email");
+        final String password = data.getStringExtra("password");
+        if (email != null || password != null) {
+            new Thread(new Runnable() {
+                public void run() {
+                    try {
+                        client.login(email, password);
+                    } catch (NetatmoOAuthException e) {
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        intent.putExtra("error", e.getMessage());
+                        startActivityForResult(intent, REQUEST_CODE_LOGIN_ONERROR);
+                    }
+                }
+            }).start();
+        }
     }
 
     private void changeLoadingIndicatorVisibility(final int visibility) {

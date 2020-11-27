@@ -24,7 +24,7 @@ public class SharedPreferencesTokenStore implements TokenStore {
         editor.putString(KEY_REFRESH_TOKEN, refreshToken);
         editor.putString(KEY_ACCESS_TOKEN, accessToken);
         editor.putLong(KEY_EXPIRES_AT, expiresAt);
-        editor.apply();
+        editor.commit();
     }
 
     @Override
