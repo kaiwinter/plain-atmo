@@ -69,6 +69,9 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        if (inLoginProcess.get()) {
+            return;
+        }
         new Thread(new Runnable() {
             public void run() {
                 getdata();
@@ -136,9 +139,6 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void startLoginActivity() {
-        if (inLoginProcess.get()) {
-            return;
-        }
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
         startActivityForResult(intent, 0);
     }
@@ -157,6 +157,12 @@ public class Main3Activity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        if (resultCode != MainActivity.RESULTCODE_LOGIN) {
+            // back pressed on login screen -> exit app
+            finish();
+            return;
+        }
         final String email = data.getStringExtra(MainActivity.EXTRA_EMAIL);
         final String password = data.getStringExtra(MainActivity.EXTRA_PASSWORD);
         if (email != null || password != null) {
@@ -170,6 +176,7 @@ public class Main3Activity extends AppCompatActivity {
                         startLoginActivityWithErrorMessage(error);
                     } finally {
                         inLoginProcess.set(false);
+                        getdata();
                     }
                 }
             }).start();

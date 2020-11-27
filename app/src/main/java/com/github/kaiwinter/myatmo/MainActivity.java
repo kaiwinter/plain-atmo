@@ -12,6 +12,8 @@ public class MainActivity extends AppCompatActivity {
     static final String EXTRA_EMAIL = "EXTRA_EMAIL";
     static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
 
+    static final int RESULTCODE_LOGIN = 1;
+
     private ActivityMainBinding binding;
 
     @Override
@@ -34,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(getApplicationContext(), Main3Activity.class);
                 intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
                 intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
-                setResult(0, intent);
+                setResult(RESULTCODE_LOGIN, intent);
                 finish();
             }
         });
