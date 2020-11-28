@@ -8,7 +8,7 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.kaiwinter.myatmo.databinding.ActivityMain3Binding;
+import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -31,18 +31,18 @@ import losty.netatmo.model.Module;
 import losty.netatmo.model.Params;
 import losty.netatmo.model.Station;
 
-public class Main3Activity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity {
 
     static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
     private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
-    private ActivityMain3Binding binding;
+    private ActivityMainBinding binding;
     private NetatmoHttpClient client;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        binding = ActivityMain3Binding.inflate(getLayoutInflater());
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         String clientId = getString(R.string.client_id);
@@ -92,7 +92,7 @@ public class Main3Activity extends AppCompatActivity {
             return;
         }
         if (isOffline()) {
-            Snackbar.make(Main3Activity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Snackbar.make(MainActivity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
             changeLoadingIndicatorVisibility(View.INVISIBLE);
             return;
         }

@@ -27,7 +27,7 @@ public class LoginActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String error = extras.getString(Main3Activity.EXTRA_LOGIN_ERROR);
+            String error = extras.getString(MainActivity.EXTRA_LOGIN_ERROR);
             binding.error.setText(getString(R.string.login_login_error, error));
         }
 
@@ -38,7 +38,7 @@ public class LoginActivity extends AppCompatActivity {
                     binding.error.setText(R.string.login_empty);
                     return;
                 }
-                Intent intent = new Intent(getApplicationContext(), Main3Activity.class);
+                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
                 intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
                 setResult(RESULTCODE_LOGIN, intent);
