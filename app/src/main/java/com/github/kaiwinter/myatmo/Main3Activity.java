@@ -1,15 +1,15 @@
 package com.github.kaiwinter.myatmo;
 
 import android.content.Intent;
+import android.os.Bundle;
 import android.os.Looper;
-
-import com.github.kaiwinter.myatmo.databinding.ActivityMain3Binding;
-import com.google.android.material.snackbar.Snackbar;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import android.os.Bundle;
-import android.view.View;
+
+import com.github.kaiwinter.myatmo.databinding.ActivityMain3Binding;
+import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
 
@@ -34,16 +34,14 @@ import losty.netatmo.model.Station;
 public class Main3Activity extends AppCompatActivity {
 
     static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
-
+    private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMain3Binding binding;
     private NetatmoHttpClient client;
-
-    private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        getWindow().getDecorView().setSystemUiVisibility( View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
+        getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
         binding = ActivityMain3Binding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
@@ -116,7 +114,7 @@ public class Main3Activity extends AppCompatActivity {
                 continue;
             }
 
-            Measures measurement = measures.get(measures.size()-1);
+            Measures measurement = measures.get(measures.size() - 1);
 
             DisplayInfo displayInfo = new DisplayInfo();
             displayInfo.moduleName = module.getName();
@@ -146,6 +144,7 @@ public class Main3Activity extends AppCompatActivity {
     /**
      * Called from a Runnable in onActivityResult() that calls the REST service to log-in.
      * Meanwhile onResume() is called which triggers a startLoginActivity(), so the "inLoginProcess"-check is necessary only there.
+     *
      * @param errorMessage Error message to show the user on the login screen
      */
     private void startLoginActivityWithErrorMessage(String errorMessage) {
@@ -226,10 +225,6 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private static class DisplayInfo {
-        enum ModuleType {
-            INDOOR, OUTDOOR
-        }
-
         String moduleName;
         ModuleType moduleType;
         long beginTime;
@@ -241,6 +236,10 @@ public class Main3Activity extends AppCompatActivity {
             Date date = new Date(beginTime);
             DateFormat formatter = SimpleDateFormat.getTimeInstance(3);
             return formatter.format(date);
+        }
+
+        enum ModuleType {
+            INDOOR, OUTDOOR
         }
     }
 }
