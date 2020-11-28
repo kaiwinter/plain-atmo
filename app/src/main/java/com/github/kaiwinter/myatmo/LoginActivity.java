@@ -6,23 +6,23 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
+import com.github.kaiwinter.myatmo.databinding.ActivityLoginBinding;
 
-public class MainActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity {
 
     static final String EXTRA_EMAIL = "EXTRA_EMAIL";
     static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
 
     static final int RESULTCODE_LOGIN = 1;
 
-    private ActivityMainBinding binding;
+    private ActivityLoginBinding binding;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
 
-        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
         Bundle extras = getIntent().getExtras();

@@ -137,7 +137,7 @@ public class Main3Activity extends AppCompatActivity {
     }
 
     private void startLoginActivity() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivityForResult(intent, 0);
     }
 
@@ -148,7 +148,7 @@ public class Main3Activity extends AppCompatActivity {
      * @param errorMessage Error message to show the user on the login screen
      */
     private void startLoginActivityWithErrorMessage(String errorMessage) {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.putExtra(EXTRA_LOGIN_ERROR, errorMessage);
         startActivityForResult(intent, 0);
     }
@@ -157,13 +157,13 @@ public class Main3Activity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        if (resultCode != MainActivity.RESULTCODE_LOGIN) {
+        if (resultCode != LoginActivity.RESULTCODE_LOGIN) {
             // back pressed on login screen -> exit app
             finish();
             return;
         }
-        final String email = data.getStringExtra(MainActivity.EXTRA_EMAIL);
-        final String password = data.getStringExtra(MainActivity.EXTRA_PASSWORD);
+        final String email = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
+        final String password = data.getStringExtra(LoginActivity.EXTRA_PASSWORD);
         if (email == null || password == null) {
             return;
         }
