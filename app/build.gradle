@@ -38,7 +38,7 @@ dependencies {
     implementation 'androidx.constraintlayout:constraintlayout:2.0.4'
     implementation 'com.google.android.material:material:1.2.1'
     implementation 'androidx.cardview:cardview:1.0.0'
-    implementation ('com.github.kaiwinter:netatmo-api:073cd97bd4'){
+    implementation ('com.github.kaiwinter:netatmo-api:b478be57e2'){
         exclude group:'org.apache.oltu.oauth2' , module: 'org.apache.oltu.oauth2.common'
         exclude group:'org.json', module:'json'
     }

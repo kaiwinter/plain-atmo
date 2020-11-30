@@ -12,6 +12,7 @@ import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
+import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -19,13 +20,14 @@ import java.net.Socket;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import losty.netatmo.NetatmoHttpClient;
+import losty.netatmo.exceptions.NetatmoNotLoggedInException;
 import losty.netatmo.exceptions.NetatmoOAuthException;
+import losty.netatmo.exceptions.NetatmoParseException;
 import losty.netatmo.model.Measures;
 import losty.netatmo.model.Module;
 import losty.netatmo.model.Params;
@@ -86,35 +88,41 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * Calls {@link #getdata_internal()} and handles thrown exceptions. If moving away from lost-carrier:netatmo-api this can be improved.
+     */
     private void getdata() {
+        try {
+            changeLoadingIndicatorVisibility(View.VISIBLE);
+            getdata_internal();
+        } catch (NetatmoNotLoggedInException |NetatmoOAuthException | NetatmoParseException e) {
+            Snackbar.make(MainActivity.this.findViewById(R.id.main), getString(R.string.error_loading_data, unwrapException(e)), Snackbar.LENGTH_LONG).show();
+        } finally {
+            changeLoadingIndicatorVisibility(View.INVISIBLE);
+        }
+    }
+
+    private void getdata_internal() {
         if (client.getOAuthStatus() == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
             startLoginActivity();
             return;
         }
         if (isOffline()) {
             Snackbar.make(MainActivity.this.findViewById(R.id.main), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-            changeLoadingIndicatorVisibility(View.INVISIBLE);
             return;
         }
-        changeLoadingIndicatorVisibility(View.VISIBLE);
 
         List<Station> stationsData = client.getStationsData(null, null);
         Station station = stationsData.get(0);
 
         List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
 
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.MINUTE, -15);
-        Date minus15mins = calendar.getTime();
-
         for (Module module : station.getModules()) {
-            List<Measures> measures = client.getMeasures(station, module, types, Params.SCALE_MAX, minus15mins, null, null, null);
+            Measures measurement = client.getLastMeasurement(station, module, types, Params.SCALE_MAX);
 
-            if (measures.size() == 0) {
+            if (measurement == null) {
                 continue;
             }
-
-            Measures measurement = measures.get(measures.size() - 1);
 
             DisplayInfo displayInfo = new DisplayInfo();
             displayInfo.moduleName = module.getName();
@@ -133,7 +141,6 @@ public class MainActivity extends AppCompatActivity {
 
             showInfo(displayInfo);
         }
-        changeLoadingIndicatorVisibility(View.INVISIBLE);
     }
 
     private void startLoginActivity() {
@@ -176,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     client.login(email, password);
                 } catch (NetatmoOAuthException e) {
-                    String error = ((OAuthProblemException) e.getCause()).getError();
+                    String error = unwrapException(e);
                     startLoginActivityWithErrorMessage(error);
                 } finally {
                     inLoginProcess.set(false);
@@ -184,6 +191,16 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }).start();
+    }
+
+    private String unwrapException(Throwable e) {
+        Throwable cause = e.getCause();
+        if (cause instanceof OAuthProblemException) {
+            return ((OAuthProblemException) e.getCause()).getError();
+        } else if (cause instanceof OAuthSystemException) {
+            return ((OAuthSystemException) e.getCause()).getMessage();
+        }
+        return e.getMessage();
     }
 
     private void changeLoadingIndicatorVisibility(final int visibility) {

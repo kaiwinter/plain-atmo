@@ -14,4 +14,5 @@
     <string name="co2" translatable="false">CO2</string>
     <string name="login_empty">Mail Address and Password must not be empty</string>
     <string name="no_connection">No internet connection</string>
+    <string name="error_loading_data">Error loading data: %1$s</string>
 </resources>
