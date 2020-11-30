@@ -92,7 +92,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (isOffline()) {
-            Snackbar.make(MainActivity.this.findViewById(R.id.main), "Keine Internetverbindung", Snackbar.LENGTH_LONG).setAction("Action", null).show();
+            Snackbar.make(MainActivity.this.findViewById(R.id.main), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             changeLoadingIndicatorVisibility(View.INVISIBLE);
             return;
         }
