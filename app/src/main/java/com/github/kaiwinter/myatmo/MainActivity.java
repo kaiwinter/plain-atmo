@@ -36,6 +36,7 @@ import losty.netatmo.model.Station;
 public class MainActivity extends AppCompatActivity {
 
     static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
+    private static final List<String> NETATMO_TYPES = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
     private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMainBinding binding;
     private NetatmoHttpClient client;
@@ -95,7 +96,7 @@ public class MainActivity extends AppCompatActivity {
         try {
             changeLoadingIndicatorVisibility(View.VISIBLE);
             getdata_internal();
-        } catch (NetatmoNotLoggedInException |NetatmoOAuthException | NetatmoParseException e) {
+        } catch (NetatmoNotLoggedInException | NetatmoOAuthException | NetatmoParseException e) {
             Snackbar.make(MainActivity.this.findViewById(R.id.main), getString(R.string.error_loading_data, unwrapException(e)), Snackbar.LENGTH_LONG).show();
         } finally {
             changeLoadingIndicatorVisibility(View.INVISIBLE);
@@ -113,12 +114,11 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<Station> stationsData = client.getStationsData(null, null);
+
         Station station = stationsData.get(0);
 
-        List<String> types = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
-
         for (Module module : station.getModules()) {
-            Measures measurement = client.getLastMeasurement(station, module, types, Params.SCALE_MAX);
+            Measures measurement = client.getLastMeasurement(station, module, NETATMO_TYPES);
 
             if (measurement == null) {
                 continue;
