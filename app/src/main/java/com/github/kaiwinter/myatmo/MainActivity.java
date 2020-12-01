@@ -17,10 +17,7 @@ import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.Socket;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -124,22 +121,22 @@ public class MainActivity extends AppCompatActivity {
                 continue;
             }
 
-            DisplayInfo displayInfo = new DisplayInfo();
-            displayInfo.moduleName = module.getName();
-            displayInfo.beginTime = measurement.getBeginTime();
-            displayInfo.temperature = measurement.getTemperature();
-            displayInfo.humidity = measurement.getHumidity();
+            ModuleVO moduleVO = new ModuleVO();
+            moduleVO.moduleName = module.getName();
+            moduleVO.beginTime = measurement.getBeginTime();
+            moduleVO.temperature = measurement.getTemperature();
+            moduleVO.humidity = measurement.getHumidity();
 
             if (module.getType().equals(Module.TYPE_INDOOR)) {
-                displayInfo.co2 = measurement.getCO2();
-                displayInfo.moduleType = DisplayInfo.ModuleType.INDOOR;
+                moduleVO.co2 = measurement.getCO2();
+                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
             } else if (module.getType().equals(Module.TYPE_OUTDOOR)) {
-                displayInfo.moduleType = DisplayInfo.ModuleType.OUTDOOR;
+                moduleVO.moduleType = ModuleVO.ModuleType.OUTDOOR;
             } else {
                 // ignore, maybe extend later
             }
 
-            showInfo(displayInfo);
+            showInfo(moduleVO);
         }
     }
 
@@ -220,43 +217,24 @@ public class MainActivity extends AppCompatActivity {
         return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
-    private void showInfo(final DisplayInfo displayInfo) {
+    private void showInfo(final ModuleVO moduleVO) {
         runOnUiThread(new Runnable() {
 
             @Override
             public void run() {
-                if (displayInfo.moduleType == DisplayInfo.ModuleType.INDOOR) {
-                    binding.module1Name.setText(displayInfo.moduleName);
-                    binding.livingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
-                    binding.livingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
-                    binding.livingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
-                    binding.livingCo2.setText(getString(R.string.display_co2, displayInfo.co2));
-                } else if (displayInfo.moduleType == DisplayInfo.ModuleType.OUTDOOR) {
-                    binding.module2Name.setText(displayInfo.moduleName);
-                    binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, displayInfo.getBeginTimeAsString()));
-                    binding.sleepingTemperature.setText(getString(R.string.display_temperature, displayInfo.temperature));
-                    binding.sleepingHumidity.setText(getString(R.string.display_humidity, displayInfo.humidity));
+                if (moduleVO.moduleType == ModuleVO.ModuleType.INDOOR) {
+                    binding.module1Name.setText(moduleVO.moduleName);
+                    binding.livingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                    binding.livingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                    binding.livingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
+                    binding.livingCo2.setText(getString(R.string.display_co2, moduleVO.co2));
+                } else if (moduleVO.moduleType == ModuleVO.ModuleType.OUTDOOR) {
+                    binding.module2Name.setText(moduleVO.moduleName);
+                    binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                    binding.sleepingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                    binding.sleepingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
                 }
             }
         });
-    }
-
-    private static class DisplayInfo {
-        String moduleName;
-        ModuleType moduleType;
-        long beginTime;
-        double temperature;
-        double humidity;
-        double co2;
-
-        public String getBeginTimeAsString() {
-            Date date = new Date(beginTime);
-            DateFormat formatter = SimpleDateFormat.getTimeInstance(3);
-            return formatter.format(date);
-        }
-
-        enum ModuleType {
-            INDOOR, OUTDOOR
-        }
     }
 }
