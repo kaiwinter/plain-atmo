@@ -39,21 +39,21 @@ public class LoginActivity extends AppCompatActivity {
             String password = extras.getString(MainActivity.EXTRA_LOGIN_PASSWORD);
             binding.password.setText(password);
         }
+    }
 
-        binding.login.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (binding.username.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
-                    binding.error.setText(R.string.login_empty);
-                    return;
-                }
-                binding.login.setEnabled(false);
-                Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-                intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
-                intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
-                setResult(RESULTCODE_LOGIN, intent);
-                finish();
-            }
-        });
+    /**
+     * Called from the login button defined in the XML.
+     */
+    public void loginClicked(View view) {
+        if (binding.username.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
+            binding.error.setText(R.string.login_empty);
+            return;
+        }
+        binding.login.setEnabled(false);
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
+        intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
+        setResult(RESULTCODE_LOGIN, intent);
+        finish();
     }
 }

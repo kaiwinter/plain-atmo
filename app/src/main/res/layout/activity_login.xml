@@ -150,7 +150,8 @@
                     android:text="@string/login_login_button"
                     android:textAllCaps="false"
                     android:textColor="#ffffff"
-                    android:textSize="24sp" />
+                    android:textSize="24sp"
+                    android:onClick="loginClicked"/>
             </LinearLayout>
 
         </ScrollView>
