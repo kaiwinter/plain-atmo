@@ -29,6 +29,12 @@ public class LoginActivity extends AppCompatActivity {
         if (extras != null) {
             String error = extras.getString(MainActivity.EXTRA_LOGIN_ERROR);
             binding.error.setText(getString(R.string.login_login_error, error));
+
+            String email = extras.getString(MainActivity.EXTRA_LOGIN_EMAIL);
+            binding.username.setText(email);
+
+            String password = extras.getString(MainActivity.EXTRA_LOGIN_PASSWORD);
+            binding.password.setText(password);
         }
 
         binding.login.setOnClickListener(new View.OnClickListener() {

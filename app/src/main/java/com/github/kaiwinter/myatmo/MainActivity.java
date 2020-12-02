@@ -33,6 +33,8 @@ import losty.netatmo.model.Station;
 public class MainActivity extends AppCompatActivity {
 
     static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
+    static final String EXTRA_LOGIN_EMAIL = "EXTRA_LOGIN_EMAIL";
+    static final String EXTRA_LOGIN_PASSWORD = "EXTRA_LOGIN_PASSWORD";
     private static final List<String> NETATMO_TYPES = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
     private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMainBinding binding;
@@ -150,10 +152,14 @@ public class MainActivity extends AppCompatActivity {
      * Meanwhile onResume() is called which triggers a startLoginActivity(), so the "inLoginProcess"-check is necessary only there.
      *
      * @param errorMessage Error message to show the user on the login screen
+     * @param email the email which was entered previously
+     * @param password the password which was entered previously
      */
-    private void startLoginActivityWithErrorMessage(String errorMessage) {
+    private void startLoginActivityWithErrorMessage(String errorMessage, String email, String password) {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         intent.putExtra(EXTRA_LOGIN_ERROR, errorMessage);
+        intent.putExtra(EXTRA_LOGIN_EMAIL, email);
+        intent.putExtra(EXTRA_LOGIN_PASSWORD, password);
         startActivityForResult(intent, 0);
     }
 
@@ -182,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                     getdata();
                 } catch (NetatmoOAuthException e) {
                     String error = unwrapException(e);
-                    startLoginActivityWithErrorMessage(error);
+                    startLoginActivityWithErrorMessage(error, email, password);
                 } finally {
                     inLoginProcess.set(false);
                 }
