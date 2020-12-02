@@ -25,6 +25,9 @@ public class LoginActivity extends AppCompatActivity {
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        // Makes activity scrollable if keyboard is shown
+        AndroidBug5497Workaround.assistActivity(this);
+
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
             String error = extras.getString(MainActivity.EXTRA_LOGIN_ERROR);
