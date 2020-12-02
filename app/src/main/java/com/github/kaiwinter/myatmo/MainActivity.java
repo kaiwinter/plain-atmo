@@ -179,12 +179,12 @@ public class MainActivity extends AppCompatActivity {
             public void run() {
                 try {
                     client.login(email, password);
+                    getdata();
                 } catch (NetatmoOAuthException e) {
                     String error = unwrapException(e);
                     startLoginActivityWithErrorMessage(error);
                 } finally {
                     inLoginProcess.set(false);
-                    getdata();
                 }
             }
         }).start();
