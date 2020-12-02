@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity {
         binding.login.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (binding.username.getText().toString().length() == 0 && binding.password.getText().toString().length() == 0) {
+                if (binding.username.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
                     binding.error.setText(R.string.login_empty);
                     return;
                 }
