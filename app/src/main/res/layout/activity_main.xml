@@ -331,7 +331,8 @@
                 android:backgroundTint="@color/colorPrimary"
                 android:src="@drawable/ic_refresh_24px"
                 app:borderWidth="0dp"
-                app:fabSize="normal" />
+                app:fabSize="normal"
+                android:onClick="refreshButtonClicked"/>
 
     </RelativeLayout>
 

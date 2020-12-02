@@ -53,17 +53,19 @@ public class MainActivity extends AppCompatActivity {
         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
         //tokenstore.setTokens(null, null, -1);
         client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
+    }
 
-        binding.refreshButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                new Thread(new Runnable() {
-                    public void run() {
-                        getdata();
-                    }
-                }).start();
+    /**
+     * Called from the refresh button defined in the XML.
+     */
+    public void refreshButtonClicked(final View view) {
+        new Thread(new Runnable() {
+            public void run() {
+                view.setEnabled(false);
+                getdata();
+                view.setEnabled(true);
             }
-        });
+        }).start();
     }
 
     @Override
