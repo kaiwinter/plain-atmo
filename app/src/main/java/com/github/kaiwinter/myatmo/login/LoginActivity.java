@@ -37,7 +37,7 @@ public class LoginActivity extends AppCompatActivity {
             binding.error.setText(getString(R.string.login_login_error, error));
 
             String email = extras.getString(EXTRA_EMAIL);
-            binding.username.setText(email);
+            binding.email.setText(email);
 
             String password = extras.getString(EXTRA_PASSWORD);
             binding.password.setText(password);
@@ -48,13 +48,13 @@ public class LoginActivity extends AppCompatActivity {
      * Called from the login button defined in the XML.
      */
     public void loginClicked(View view) {
-        if (binding.username.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
+        if (binding.email.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
             binding.error.setText(R.string.login_empty);
             return;
         }
         binding.login.setEnabled(false);
         Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
+        intent.putExtra(EXTRA_EMAIL, binding.email.getText().toString());
         intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
         setResult(RESULTCODE_LOGIN, intent);
         finish();
