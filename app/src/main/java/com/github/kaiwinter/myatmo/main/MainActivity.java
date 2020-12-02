@@ -58,14 +58,8 @@ public class MainActivity extends AppCompatActivity {
     /**
      * Called from the refresh button defined in the XML.
      */
-    public void refreshButtonClicked(final View view) {
-        new Thread(new Runnable() {
-            public void run() {
-                view.setEnabled(false);
-                getdata();
-                view.setEnabled(true);
-            }
-        }).start();
+    public void refreshButtonClicked(View view) {
+        new Thread(this::getdata).start();
     }
 
     @Override
@@ -74,11 +68,7 @@ public class MainActivity extends AppCompatActivity {
         if (inLoginProcess.get()) {
             return;
         }
-        new Thread(new Runnable() {
-            public void run() {
-                getdata();
-            }
-        }).start();
+        new Thread(this::getdata).start();
     }
 
     private boolean isOffline() {
@@ -182,17 +172,15 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivityWithErrorMessage(error, email, password);
         }
         inLoginProcess.set(true);
-        new Thread(new Runnable() {
-            public void run() {
-                try {
-                    client.login(email, password);
-                    getdata();
-                } catch (NetatmoOAuthException e) {
-                    String error = unwrapException(e);
-                    startLoginActivityWithErrorMessage(error, email, password);
-                } finally {
-                    inLoginProcess.set(false);
-                }
+        new Thread(() -> {
+            try {
+                client.login(email, password);
+                getdata();
+            } catch (NetatmoOAuthException e) {
+                String error = unwrapException(e);
+                startLoginActivityWithErrorMessage(error, email, password);
+            } finally {
+                inLoginProcess.set(false);
             }
         }).start();
     }
@@ -211,12 +199,7 @@ public class MainActivity extends AppCompatActivity {
         if (onUiThread()) {
             binding.loadingIndicator.setVisibility(visibility);
         } else {
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    binding.loadingIndicator.setVisibility(visibility);
-                }
-            });
+            runOnUiThread(() -> binding.loadingIndicator.setVisibility(visibility));
         }
     }
 
@@ -225,22 +208,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showInfo(final ModuleVO moduleVO) {
-        runOnUiThread(new Runnable() {
-
-            @Override
-            public void run() {
-                if (moduleVO.moduleType == ModuleVO.ModuleType.INDOOR) {
-                    binding.module1Name.setText(moduleVO.moduleName);
-                    binding.livingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
-                    binding.livingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
-                    binding.livingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
-                    binding.livingCo2.setText(getString(R.string.display_co2, moduleVO.co2));
-                } else if (moduleVO.moduleType == ModuleVO.ModuleType.OUTDOOR) {
-                    binding.module2Name.setText(moduleVO.moduleName);
-                    binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
-                    binding.sleepingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
-                    binding.sleepingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
-                }
+        runOnUiThread(() -> {
+            if (moduleVO.moduleType == ModuleVO.ModuleType.INDOOR) {
+                binding.module1Name.setText(moduleVO.moduleName);
+                binding.livingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                binding.livingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                binding.livingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
+                binding.livingCo2.setText(getString(R.string.display_co2, moduleVO.co2));
+            } else if (moduleVO.moduleType == ModuleVO.ModuleType.OUTDOOR) {
+                binding.module2Name.setText(moduleVO.moduleName);
+                binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                binding.sleepingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                binding.sleepingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
             }
         });
     }
