@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo;
+package com.github.kaiwinter.myatmo.login;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -6,14 +6,17 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.kaiwinter.myatmo.main.MainActivity;
+import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.databinding.ActivityLoginBinding;
 
 public class LoginActivity extends AppCompatActivity {
 
-    static final String EXTRA_EMAIL = "EXTRA_EMAIL";
-    static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
+    public static final String EXTRA_ERROR = "EXTRA_ERROR";
+    public static final String EXTRA_EMAIL = "EXTRA_EMAIL";
+    public static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
 
-    static final int RESULTCODE_LOGIN = 1;
+    public static final int RESULTCODE_LOGIN = 1;
 
     private ActivityLoginBinding binding;
 
@@ -30,13 +33,13 @@ public class LoginActivity extends AppCompatActivity {
 
         Bundle extras = getIntent().getExtras();
         if (extras != null) {
-            String error = extras.getString(MainActivity.EXTRA_LOGIN_ERROR);
+            String error = extras.getString(EXTRA_ERROR);
             binding.error.setText(getString(R.string.login_login_error, error));
 
-            String email = extras.getString(MainActivity.EXTRA_LOGIN_EMAIL);
+            String email = extras.getString(EXTRA_EMAIL);
             binding.username.setText(email);
 
-            String password = extras.getString(MainActivity.EXTRA_LOGIN_PASSWORD);
+            String password = extras.getString(EXTRA_PASSWORD);
             binding.password.setText(password);
         }
     }

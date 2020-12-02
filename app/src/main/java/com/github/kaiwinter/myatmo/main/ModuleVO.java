@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo;
+package com.github.kaiwinter.myatmo.main;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;

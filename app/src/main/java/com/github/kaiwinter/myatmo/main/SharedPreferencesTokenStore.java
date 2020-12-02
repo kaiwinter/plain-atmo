@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo;
+package com.github.kaiwinter.myatmo.main;
 
 import android.content.Context;
 import android.content.SharedPreferences;

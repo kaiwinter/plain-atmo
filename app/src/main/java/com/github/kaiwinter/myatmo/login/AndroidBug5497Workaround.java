@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo;
+package com.github.kaiwinter.myatmo.login;
 
 import android.app.Activity;
 import android.graphics.Rect;

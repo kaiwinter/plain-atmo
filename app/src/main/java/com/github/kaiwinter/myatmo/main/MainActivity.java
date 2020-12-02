@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo;
+package com.github.kaiwinter.myatmo.main;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -9,7 +9,9 @@ import android.view.View;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
+import com.github.kaiwinter.myatmo.login.LoginActivity;
 import com.google.android.material.snackbar.Snackbar;
 
 import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
@@ -33,9 +35,6 @@ import losty.netatmo.model.Station;
 
 public class MainActivity extends AppCompatActivity {
 
-    static final String EXTRA_LOGIN_ERROR = "EXTRA_LOGIN_ERROR";
-    static final String EXTRA_LOGIN_EMAIL = "EXTRA_LOGIN_EMAIL";
-    static final String EXTRA_LOGIN_PASSWORD = "EXTRA_LOGIN_PASSWORD";
     private static final List<String> NETATMO_TYPES = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
     private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMainBinding binding;
@@ -158,9 +157,9 @@ public class MainActivity extends AppCompatActivity {
      */
     private void startLoginActivityWithErrorMessage(String errorMessage, String email, String password) {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.putExtra(EXTRA_LOGIN_ERROR, errorMessage);
-        intent.putExtra(EXTRA_LOGIN_EMAIL, email);
-        intent.putExtra(EXTRA_LOGIN_PASSWORD, password);
+        intent.putExtra(LoginActivity.EXTRA_ERROR, errorMessage);
+        intent.putExtra(LoginActivity.EXTRA_EMAIL, email);
+        intent.putExtra(LoginActivity.EXTRA_PASSWORD, password);
         startActivityForResult(intent, 0);
     }
 
