@@ -3,6 +3,7 @@ package com.github.kaiwinter.myatmo;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.View;
 
 import androidx.annotation.Nullable;
@@ -152,8 +153,8 @@ public class MainActivity extends AppCompatActivity {
      * Meanwhile onResume() is called which triggers a startLoginActivity(), so the "inLoginProcess"-check is necessary only there.
      *
      * @param errorMessage Error message to show the user on the login screen
-     * @param email the email which was entered previously
-     * @param password the password which was entered previously
+     * @param email        the email which was entered previously
+     * @param password     the password which was entered previously
      */
     private void startLoginActivityWithErrorMessage(String errorMessage, String email, String password) {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
@@ -174,11 +175,10 @@ public class MainActivity extends AppCompatActivity {
         }
         final String email = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
         final String password = data.getStringExtra(LoginActivity.EXTRA_PASSWORD);
-        if (email == null || password == null) {
-            return;
-        }
-        if (email.length() == 0 || password.length() == 0) {
-            return;
+
+        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
+            String error = getString(R.string.login_empty);
+            startLoginActivityWithErrorMessage(error, email, password);
         }
         inLoginProcess.set(true);
         new Thread(new Runnable() {
