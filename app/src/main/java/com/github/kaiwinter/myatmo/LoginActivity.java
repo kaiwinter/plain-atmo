@@ -38,6 +38,7 @@ public class LoginActivity extends AppCompatActivity {
                     binding.error.setText(R.string.login_empty);
                     return;
                 }
+                binding.login.setEnabled(false);
                 Intent intent = new Intent(getApplicationContext(), MainActivity.class);
                 intent.putExtra(EXTRA_EMAIL, binding.username.getText().toString());
                 intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
