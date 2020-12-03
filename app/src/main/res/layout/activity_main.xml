@@ -57,7 +57,7 @@
                             android:textSize="20sp" />
 
                     <TextView
-                            android:id="@+id/livingTimestamp"
+                            android:id="@+id/module1Timestamp"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="bottom"
@@ -92,7 +92,7 @@
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:id="@+id/livingTemperature"
+                                    android:id="@+id/module1Temperature"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="8dp"
@@ -130,7 +130,7 @@
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:id="@+id/livingHumidity"
+                                    android:id="@+id/module1Humidity"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="8dp"
@@ -179,7 +179,7 @@
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:id="@+id/livingCo2"
+                                    android:id="@+id/module1Co2"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="8dp"
@@ -220,7 +220,7 @@
                             android:textSize="20sp" />
 
                     <TextView
-                            android:id="@+id/sleepingTimestamp"
+                            android:id="@+id/module2Timestamp"
                             android:layout_width="wrap_content"
                             android:layout_height="match_parent"
                             android:layout_gravity="bottom"
@@ -255,7 +255,7 @@
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:id="@+id/sleepingTemperature"
+                                    android:id="@+id/module2Temperature"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="8dp"
@@ -293,7 +293,7 @@
                                 android:orientation="vertical">
 
                             <TextView
-                                    android:id="@+id/sleepingHumidity"
+                                    android:id="@+id/module2Humidity"
                                     android:layout_width="match_parent"
                                     android:layout_height="match_parent"
                                     android:layout_marginTop="8dp"

@@ -211,15 +211,15 @@ public class MainActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             if (moduleVO.moduleType == ModuleVO.ModuleType.INDOOR) {
                 binding.module1Name.setText(moduleVO.moduleName);
-                binding.livingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
-                binding.livingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
-                binding.livingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
-                binding.livingCo2.setText(getString(R.string.display_co2, moduleVO.co2));
+                binding.module1Timestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                binding.module1Temperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                binding.module1Humidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
+                binding.module1Co2.setText(getString(R.string.display_co2, moduleVO.co2));
             } else if (moduleVO.moduleType == ModuleVO.ModuleType.OUTDOOR) {
                 binding.module2Name.setText(moduleVO.moduleName);
-                binding.sleepingTimestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
-                binding.sleepingTemperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
-                binding.sleepingHumidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
+                binding.module2Timestamp.setText(getString(R.string.display_timestamp, moduleVO.getBeginTimeAsString()));
+                binding.module2Temperature.setText(getString(R.string.display_temperature, moduleVO.temperature));
+                binding.module2Humidity.setText(getString(R.string.display_humidity, moduleVO.humidity));
             }
         });
     }
