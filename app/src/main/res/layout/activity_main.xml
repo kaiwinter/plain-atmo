@@ -76,6 +76,7 @@
                         android:weightSum="100">
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/module1TemperatureCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
@@ -84,7 +85,8 @@
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
                             app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp">
+                            app:contentPadding="16dp"
+                            android:onClick="detailButtonClicked">
 
                         <LinearLayout
                                 android:layout_width="match_parent"
@@ -114,6 +116,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/module1HumidityCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
@@ -122,7 +125,8 @@
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
                             app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp">
+                            app:contentPadding="16dp"
+                            android:onClick="detailButtonClicked">
 
                         <LinearLayout
                                 android:layout_width="match_parent"
@@ -163,6 +167,7 @@
                         android:weightSum="100">
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/module1Co2Card"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
@@ -171,7 +176,8 @@
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
                             app:cardUseCompatPadding="true"
-                            app:contentPadding="12dp">
+                            app:contentPadding="12dp"
+                            android:onClick="detailButtonClicked">
 
                         <LinearLayout
                                 android:layout_width="match_parent"
@@ -239,6 +245,7 @@
                         android:weightSum="100">
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/module2TemperatureCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
@@ -247,7 +254,8 @@
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
                             app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp">
+                            app:contentPadding="16dp"
+                            android:onClick="detailButtonClicked">
 
                         <LinearLayout
                                 android:layout_width="match_parent"
@@ -277,6 +285,7 @@
                     </androidx.cardview.widget.CardView>
 
                     <androidx.cardview.widget.CardView
+                            android:id="@+id/module2HumidityCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
@@ -285,7 +294,8 @@
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
                             app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp">
+                            app:contentPadding="16dp"
+                            android:onClick="detailButtonClicked">
 
                         <LinearLayout
                                 android:layout_width="match_parent"

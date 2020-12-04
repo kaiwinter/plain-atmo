@@ -4,22 +4,21 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.myatmo.R;
+import com.github.kaiwinter.myatmo.chart.ChartActivity;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.github.kaiwinter.myatmo.login.LoginActivity;
+import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.myatmo.util.ExceptionUtil;
+import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.google.android.material.snackbar.Snackbar;
 
-import org.apache.oltu.oauth2.common.exception.OAuthProblemException;
-import org.apache.oltu.oauth2.common.exception.OAuthSystemException;
-
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -39,6 +38,12 @@ public class MainActivity extends AppCompatActivity {
     private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMainBinding binding;
     private NetatmoHttpClient client;
+
+    private String stationId;
+    private String indoorName;
+    private String indoorId;
+    private String outdoorName;
+    private String outdoorId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +67,44 @@ public class MainActivity extends AppCompatActivity {
         new Thread(this::getdata).start();
     }
 
+    public void detailButtonClicked(View view) {
+        if (view == binding.module1TemperatureCard) {
+            showIndoorChart(Params.TYPE_TEMPERATURE);
+        } else if (view == binding.module1HumidityCard) {
+            showIndoorChart(Params.TYPE_HUMIDITY);
+        } else if (view == binding.module1Co2Card) {
+            showIndoorChart(Params.TYPE_CO2);
+        } else if (view == binding.module2TemperatureCard) {
+            showOutdoorChart(Params.TYPE_TEMPERATURE);
+        } else if (view == binding.module2HumidityCard) {
+            showOutdoorChart(Params.TYPE_HUMIDITY);
+        }
+    }
+
+    private void showIndoorChart(String measurementType) {
+        if (indoorId == null) {
+            return;
+        }
+        Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
+        intent.putExtra(ChartActivity.STATION_ID, stationId);
+        intent.putExtra(ChartActivity.MODULE_ID, indoorId);
+        intent.putExtra(ChartActivity.MODULE_NAME, indoorName);
+        intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
+        startActivity(intent);
+    }
+
+    private void showOutdoorChart(String measurementType) {
+        if (outdoorId == null) {
+            return;
+        }
+        Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
+        intent.putExtra(ChartActivity.STATION_ID, stationId);
+        intent.putExtra(ChartActivity.MODULE_ID, outdoorId);
+        intent.putExtra(ChartActivity.MODULE_NAME, outdoorName);
+        intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
+        startActivity(intent);
+    }
+
     @Override
     protected void onResume() {
         super.onResume();
@@ -69,15 +112,6 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         new Thread(this::getdata).start();
-    }
-
-    private boolean isOffline() {
-        try (Socket sock = new Socket()) {
-            sock.connect(new InetSocketAddress("api.netatmo.net", 443), 1500);
-            return false;
-        } catch (IOException e) {
-            return true;
-        }
     }
 
     /**
@@ -88,7 +122,8 @@ public class MainActivity extends AppCompatActivity {
             changeLoadingIndicatorVisibility(View.VISIBLE);
             getdata_internal();
         } catch (NetatmoNotLoggedInException | NetatmoOAuthException | NetatmoParseException e) {
-            Snackbar.make(MainActivity.this.findViewById(R.id.main), getString(R.string.error_loading_data, unwrapException(e)), Snackbar.LENGTH_LONG).show();
+            Log.e("myatmo", e.getMessage(), e);
+            Snackbar.make(binding.getRoot(), getString(R.string.error_loading_data, ExceptionUtil.unwrapException(e)), Snackbar.LENGTH_LONG).show();
         } finally {
             changeLoadingIndicatorVisibility(View.INVISIBLE);
         }
@@ -99,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivity();
             return;
         }
-        if (isOffline()) {
+        if (NetworkUtil.isOffline()) {
             Snackbar.make(MainActivity.this.findViewById(R.id.main), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
@@ -107,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
         List<Station> stationsData = client.getStationsData(null, null);
 
         Station station = stationsData.get(0);
+        stationId = station.getId();
 
         for (Module module : station.getModules()) {
             Measures measurement = client.getLastMeasurement(station, module, NETATMO_TYPES);
@@ -122,9 +158,13 @@ public class MainActivity extends AppCompatActivity {
             moduleVO.humidity = measurement.getHumidity();
 
             if (module.getType().equals(Module.TYPE_INDOOR)) {
+                indoorId = module.getId();
+                indoorName = module.getName();
                 moduleVO.co2 = measurement.getCO2();
                 moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
             } else if (module.getType().equals(Module.TYPE_OUTDOOR)) {
+                outdoorId = module.getId();
+                outdoorName = module.getName();
                 moduleVO.moduleType = ModuleVO.ModuleType.OUTDOOR;
             } else {
                 // ignore, maybe extend later
@@ -177,22 +217,12 @@ public class MainActivity extends AppCompatActivity {
                 client.login(email, password);
                 getdata();
             } catch (NetatmoOAuthException e) {
-                String error = unwrapException(e);
+                String error = ExceptionUtil.unwrapException(e);
                 startLoginActivityWithErrorMessage(error, email, password);
             } finally {
                 inLoginProcess.set(false);
             }
         }).start();
-    }
-
-    private String unwrapException(Throwable e) {
-        Throwable cause = e.getCause();
-        if (cause instanceof OAuthProblemException) {
-            return ((OAuthProblemException) e.getCause()).getError();
-        } else if (cause instanceof OAuthSystemException) {
-            return ((OAuthSystemException) e.getCause()).getMessage();
-        }
-        return e.getMessage();
     }
 
     private void changeLoadingIndicatorVisibility(final int visibility) {

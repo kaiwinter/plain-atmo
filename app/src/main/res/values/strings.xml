@@ -15,4 +15,6 @@
     <string name="login_empty">Mail Address and Password must not be empty</string>
     <string name="no_connection">No internet connection</string>
     <string name="error_loading_data">Error loading data: %1$s</string>
+    <string name="chart_no_data">No chart data available</string>
+    <string name="chart_timespan">" (last 24 hours)"</string>
 </resources>

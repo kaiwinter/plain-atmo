@@ -1,8 +1,6 @@
 package com.github.kaiwinter.myatmo.main;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import com.github.kaiwinter.myatmo.util.DateTimeUtil;
 
 /**
  * Value Object which represents one netamo module. {@link ModuleType} defines which type of module this is.
@@ -19,9 +17,7 @@ public class ModuleVO {
      * @return the {@link #beginTime} in short String representation
      */
     public String getBeginTimeAsString() {
-        Date date = new Date(beginTime);
-        DateFormat formatter = SimpleDateFormat.getTimeInstance(3);
-        return formatter.format(date);
+        return DateTimeUtil.getDateAsShortTimeString(beginTime);
     }
 
     /**

@@ -1,4 +1,4 @@
-package com.github.kaiwinter.myatmo.main;
+package com.github.kaiwinter.myatmo.storage;
 
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -7,6 +7,9 @@ import androidx.preference.PreferenceManager;
 
 import losty.netatmo.store.TokenStore;
 
+/**
+ * Implements the persistence of the OAuth token for the netatmo-api library.
+ */
 public class SharedPreferencesTokenStore implements TokenStore {
 
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
@@ -14,7 +17,7 @@ public class SharedPreferencesTokenStore implements TokenStore {
     private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
     private final SharedPreferences sharedPreferences;
 
-    SharedPreferencesTokenStore(Context context) {
+    public SharedPreferencesTokenStore(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 

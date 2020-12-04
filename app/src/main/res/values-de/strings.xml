@@ -9,4 +9,6 @@
     <string name="login_empty">Mailadresse und Passwort dürfen nicht leer sein</string>
     <string name="no_connection">Keine Internetverbindung</string>
     <string name="error_loading_data">Fehler beim Abrufen von Daten: %1$s</string>
+    <string name="chart_no_data">Keine Daten verfügbar</string>
+    <string name="chart_timespan">" (letzte 24 Stunden)"</string>
 </resources>
