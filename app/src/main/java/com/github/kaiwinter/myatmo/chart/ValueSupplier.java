@@ -23,6 +23,11 @@ abstract class ValueSupplier {
     abstract int getLabel();
 
     /**
+     * @return the resource ID of the format string for this value
+     */
+    abstract int formatStringId();
+
+    /**
      * {@link ValueSupplier} implementation for temperature.
      */
     static class TemperatureValueSupplier extends ValueSupplier {
@@ -34,6 +39,11 @@ abstract class ValueSupplier {
         @Override
         int getLabel() {
             return R.string.temperature;
+        }
+
+        @Override
+        int formatStringId() {
+            return R.string.display_temperature;
         }
     }
 
@@ -50,6 +60,11 @@ abstract class ValueSupplier {
         int getLabel() {
             return R.string.humidity;
         }
+
+        @Override
+        int formatStringId() {
+            return R.string.display_humidity;
+        }
     }
 
     /**
@@ -64,6 +79,11 @@ abstract class ValueSupplier {
         @Override
         int getLabel() {
             return R.string.co2;
+        }
+
+        @Override
+        int formatStringId() {
+            return R.string.display_co2;
         }
     }
 }

@@ -1,5 +1,6 @@
 package com.github.kaiwinter.myatmo.chart;
 
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
 import android.util.Log;
@@ -16,6 +17,7 @@ import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
 import com.github.kaiwinter.myatmo.util.ExceptionUtil;
 import com.github.kaiwinter.myatmo.util.NetworkUtil;
+import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -113,12 +115,11 @@ public class ChartActivity extends AppCompatActivity {
         Station station = new Station(null, stationId);
         Module module = new Module(null, moduleId, null);
 
-        Date endDate = new Date();
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date startDate = calendar.getTime();
 
-        List<Measures> measures = client.getMeasures(station, module, Collections.singletonList(measurementType), Params.SCALE_ONE_HOUR, startDate, endDate, null, null);
+        List<Measures> measures = client.getMeasures(station, module, Collections.singletonList(measurementType), Params.SCALE_MAX, startDate, null, null, null);
 
         ValueSupplier valueSupplier;
         if (Params.TYPE_TEMPERATURE.equals(measurementType)) {
@@ -139,7 +140,15 @@ public class ChartActivity extends AppCompatActivity {
         }
         LineDataSet dataSet = new LineDataSet(entries, getString(valueSupplier.getLabel()) + getString(R.string.chart_timespan));
         dataSet.setDrawFilled(true);
+        int color = hex2RGB(R.color.colorPrimaryDark);
+
+        dataSet.setFillColor(color);
+        dataSet.setColors(color);
+        dataSet.setDrawCircles(false);
+
         LineData lineData = new LineData(dataSet);
+        lineData.setDrawValues(false);
+
         binding.chart.setData(lineData);
 
         XAxis xAxis = binding.chart.getXAxis();
@@ -151,9 +160,21 @@ public class ChartActivity extends AppCompatActivity {
             }
         });
 
+        // create marker to display box when values are selected
+        MarkerView markerView = new MyMarkerView(this, R.layout.custom_marker_view, valueSupplier.formatStringId());
+        markerView.setChartView(binding.chart);
+        binding.chart.setMarker(markerView);
+
         binding.chart.getDescription().setEnabled(false);
-        binding.chart.setScaleEnabled(true);
         runOnUiThread(() -> binding.chart.invalidate());
+    }
+
+    private int hex2RGB(int colorId) {
+        int color = getResources().getColor(colorId);
+        int r = Color.red(color);
+        int g = Color.green(color);
+        int b = Color.blue(color);
+        return Color.rgb(r, g, b);
     }
 
     @Override
