@@ -13,7 +13,7 @@ import com.github.mikephil.charting.highlight.Highlight;
 import com.github.mikephil.charting.utils.MPPointF;
 
 @SuppressLint("ViewConstructor")
-public class MyMarkerView extends MarkerView {
+class MyMarkerView extends MarkerView {
 
     private final int formatStringId;
     private final TextView tvContent;

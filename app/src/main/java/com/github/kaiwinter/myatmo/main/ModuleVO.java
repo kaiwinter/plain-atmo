@@ -5,7 +5,7 @@ import com.github.kaiwinter.myatmo.util.DateTimeUtil;
 /**
  * Value Object which represents one netamo module. {@link ModuleType} defines which type of module this is.
  */
-public class ModuleVO {
+class ModuleVO {
     String moduleName;
     ModuleType moduleType;
     long beginTime;
@@ -16,7 +16,7 @@ public class ModuleVO {
     /**
      * @return the {@link #beginTime} in short String representation
      */
-    public String getBeginTimeAsString() {
+    String getBeginTimeAsString() {
         return DateTimeUtil.getDateAsShortTimeString(beginTime);
     }
 
