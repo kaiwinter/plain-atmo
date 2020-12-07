@@ -135,7 +135,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         if (NetworkUtil.isOffline()) {
-            Snackbar.make(MainActivity.this.findViewById(R.id.main), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+            Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
 
