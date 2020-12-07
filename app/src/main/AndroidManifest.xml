@@ -15,7 +15,7 @@
             android:name=".login.LoginActivity"
             android:label=""
             android:screenOrientation="portrait"
-            android:theme="@style/MyAppTheme"
+            android:theme="@style/AppTheme.NoActionBar"
             android:windowSoftInputMode="stateHidden|adjustPan">
         </activity>
 
