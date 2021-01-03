@@ -140,6 +140,10 @@ public class MainActivity extends AppCompatActivity {
         }
 
         List<Station> stationsData = client.getStationsData(null, null);
+        if (stationsData.isEmpty()) {
+            Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
+            return;
+        }
 
         Station station = stationsData.get(0);
         stationId = station.getId();
