@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name" translatable="false">myatmo</string>
+    <string name="app_name" translatable="false">plain atmo</string>
     <string name="display_temperature" translatable="false">%1$,.1f°C</string>
     <string name="display_timestamp" translatable="false">(%1$s)</string>
     <string name="display_humidity" translatable="false">%1$,.0f%%</string>

@@ -1,4 +1,4 @@
-# ![app icon](https://raw.githubusercontent.com/kaiwinter/myatmo-android/assets/ic_launcher.png) myatmo
+# ![app icon](https://raw.githubusercontent.com/kaiwinter/myatmo-android/assets/ic_launcher.png) plain atmo
 Alternative Netatmo client. It shows the data from one indoor and one outdoor station.
 
 Provide a `credentials.xml` under `/res/values/` (see `/res/values/credentials_sample.xml`).
