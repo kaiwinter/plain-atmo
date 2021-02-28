@@ -3,7 +3,7 @@ package com.github.kaiwinter.myatmo.chart;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Looper;
-import android.util.Log;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 
@@ -12,10 +12,16 @@ import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.myatmo.R;
+import com.github.kaiwinter.myatmo.chart.rest.MeasureService;
+import com.github.kaiwinter.myatmo.chart.rest.model.Measure;
+import com.github.kaiwinter.myatmo.chart.rest.model.Measurement;
 import com.github.kaiwinter.myatmo.databinding.ActivityChartBinding;
+import com.github.kaiwinter.myatmo.main.Params;
+import com.github.kaiwinter.myatmo.rest.APIError;
+import com.github.kaiwinter.myatmo.rest.NetatmoCallback;
+import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
-import com.github.kaiwinter.myatmo.util.ExceptionUtil;
 import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
@@ -27,31 +33,26 @@ import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
-import losty.netatmo.NetatmoHttpClient;
-import losty.netatmo.exceptions.NetatmoNotLoggedInException;
-import losty.netatmo.exceptions.NetatmoOAuthException;
-import losty.netatmo.exceptions.NetatmoParseException;
-import losty.netatmo.model.Measures;
-import losty.netatmo.model.Module;
-import losty.netatmo.model.Params;
-import losty.netatmo.model.Station;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class ChartActivity extends AppCompatActivity {
 
-    public static final String STATION_ID = "STATION_ID";
     public static final String MODULE_ID = "MODULE_ID";
+    public static final String DEVICE_ID = "DEVICE_ID";
     public static final String MEASUREMENT_TYPE = "MEASUREMENT_TYPE";
     public static final String MODULE_NAME = "MODULE_NAME";
 
-    private NetatmoHttpClient client;
     private ActivityChartBinding binding;
-    private String stationId;
     private String moduleId;
+    private String deviceId;
     private String measurementType;
+
+    private SharedPreferencesTokenStore tokenstore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,20 +66,16 @@ public class ChartActivity extends AppCompatActivity {
         if (extras == null) {
             finish();
         }
-        stationId = extras.getString(STATION_ID);
         moduleId = extras.getString(MODULE_ID);
+        deviceId = extras.getString(DEVICE_ID);
         String moduleName = extras.getString(MODULE_NAME);
         measurementType = extras.getString(MEASUREMENT_TYPE);
-
-        String clientId = getString(R.string.client_id);
-        String clientSecret = getString(R.string.client_secret);
-
-        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
-        client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
 
         ActionBar supportActionBar = getSupportActionBar();
         supportActionBar.setTitle(moduleName);
         supportActionBar.setDisplayHomeAsUpEnabled(true);
+
+        tokenstore = new SharedPreferencesTokenStore(this);
     }
 
     @Override
@@ -87,40 +84,24 @@ public class ChartActivity extends AppCompatActivity {
         new Thread(this::getdata).start();
     }
 
-    /**
-     * Calls {@link #getdata_internal()} and handles thrown exceptions. If moving away from lost-carrier:netatmo-api this can be improved.
-     */
     private void getdata() {
-        try {
-            changeLoadingIndicatorVisibility(View.VISIBLE);
-            getdata_internal();
-        } catch (NetatmoNotLoggedInException | NetatmoOAuthException | NetatmoParseException e) {
-            Log.e("myatmo", e.getMessage(), e);
-            Snackbar.make(binding.getRoot(), getString(R.string.error_loading_data, ExceptionUtil.unwrapException(e)), Snackbar.LENGTH_LONG).show();
-        } finally {
-            changeLoadingIndicatorVisibility(View.INVISIBLE);
-        }
-    }
 
-    private void getdata_internal() {
-        if (client.getOAuthStatus() == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
+        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             finish(); // return to MainActivity for login
             return;
         }
-        if (NetworkUtil.isOffline()) {
+        if (!NetworkUtil.isOnline(this)) {
             Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
 
-        Station station = new Station(null, stationId);
-        Module module = new Module(null, moduleId, null);
+        changeLoadingIndicatorVisibility(View.VISIBLE);
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date startDate = calendar.getTime();
 
-        List<Measures> measures = client.getMeasures(station, module, Collections.singletonList(measurementType), Params.SCALE_MAX, startDate, null, null, null);
-
+        //
         ValueSupplier valueSupplier;
         if (Params.TYPE_TEMPERATURE.equals(measurementType)) {
             valueSupplier = new ValueSupplier.TemperatureValueSupplier();
@@ -133,40 +114,66 @@ public class ChartActivity extends AppCompatActivity {
             return;
         }
 
-        // Create chart
-        List<Entry> entries = new ArrayList<>();
-        for (Measures measurement : measures) {
-            entries.add(new Entry(measurement.getBeginTime(), valueSupplier.getValue(measurement)));
-        }
-        LineDataSet dataSet = new LineDataSet(entries, getString(valueSupplier.getLabel()) + getString(R.string.chart_timespan));
-        dataSet.setDrawFilled(true);
-        int color = hex2RGB(R.color.colorPrimaryDark);
-
-        dataSet.setFillColor(color);
-        dataSet.setColors(color);
-        dataSet.setDrawCircles(false);
-
-        LineData lineData = new LineData(dataSet);
-        lineData.setDrawValues(false);
-
-        binding.chart.setData(lineData);
-
-        XAxis xAxis = binding.chart.getXAxis();
-        xAxis.setValueFormatter(new ValueFormatter() {
-
+        MeasureService service = ServiceGenerator.createService(MeasureService.class, tokenstore.getAccessToken());
+        Call<Measure> max = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
+        max.enqueue(new NetatmoCallback<Measure>(this, binding.loadingIndicator) {
             @Override
-            public String getFormattedValue(float value) {
-                return DateTimeUtil.getDateAsShortTimeString((long) value);
+            public void onResponse(Call<Measure> call, Response<Measure> response) {
+                if (response.code() != 200) {
+                    APIError apiError = ServiceGenerator.parseError(response);
+                    Snackbar snackbar = Snackbar.make(binding.getRoot(), apiError.error.message, Snackbar.LENGTH_LONG);
+
+                    if (response.code() == 401 || response.code() == 403) {
+                        snackbar.setAction("Neu einloggen", v -> {
+                            tokenstore.setTokens(null, null, -1);
+                            finish();
+                        });
+                    }
+                    snackbar.show();
+                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                    return;
+                }
+                Measure responseBody = response.body();
+
+                List<Entry> entries = new ArrayList<>();
+                List<Measurement> measurements = responseBody.body.measurements;
+                for (Measurement measurement : measurements) {
+                    entries.add(new Entry(measurement.beginTime, (float) measurement.value));
+                }
+
+                LineDataSet dataSet = new LineDataSet(entries, getString(valueSupplier.getLabel()) + getString(R.string.chart_timespan));
+                dataSet.setDrawFilled(true);
+                int color = hex2RGB(R.color.colorPrimaryDark);
+
+                dataSet.setFillColor(color);
+                dataSet.setColors(color);
+                dataSet.setDrawCircles(false);
+
+                LineData lineData = new LineData(dataSet);
+                lineData.setDrawValues(false);
+
+                binding.chart.setData(lineData);
+
+                XAxis xAxis = binding.chart.getXAxis();
+                xAxis.setValueFormatter(new ValueFormatter() {
+
+                    @Override
+                    public String getFormattedValue(float value) {
+                        return DateTimeUtil.getDateAsShortTimeString((long) value);
+                    }
+                });
+
+                // create marker to display box when values are selected
+                MarkerView markerView = new MyMarkerView(ChartActivity.this, R.layout.custom_marker_view, valueSupplier.formatStringId());
+                markerView.setChartView(binding.chart);
+                binding.chart.setMarker(markerView);
+
+                binding.chart.getDescription().setEnabled(false);
+                runOnUiThread(() -> binding.chart.invalidate());
+                changeLoadingIndicatorVisibility(View.INVISIBLE);
             }
         });
 
-        // create marker to display box when values are selected
-        MarkerView markerView = new MyMarkerView(this, R.layout.custom_marker_view, valueSupplier.formatStringId());
-        markerView.setChartView(binding.chart);
-        binding.chart.setMarker(markerView);
-
-        binding.chart.getDescription().setEnabled(false);
-        runOnUiThread(() -> binding.chart.invalidate());
     }
 
     private int hex2RGB(int colorId) {

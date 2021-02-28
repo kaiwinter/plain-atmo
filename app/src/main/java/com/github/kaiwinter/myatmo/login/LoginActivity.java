@@ -1,22 +1,31 @@
 package com.github.kaiwinter.myatmo.login;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Looper;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.browser.customtabs.CustomTabsIntent;
 
-import com.github.kaiwinter.myatmo.main.MainActivity;
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.databinding.ActivityLoginBinding;
+import com.github.kaiwinter.myatmo.login.rest.LoginService;
+import com.github.kaiwinter.myatmo.main.MainActivity;
+import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
+import com.github.kaiwinter.myatmo.rest.NetatmoCallback;
+import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
+import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    public static final String EXTRA_ERROR = "EXTRA_ERROR";
-    public static final String EXTRA_EMAIL = "EXTRA_EMAIL";
-    public static final String EXTRA_PASSWORD = "EXTRA_PASSWORD";
-
-    public static final int RESULTCODE_LOGIN = 1;
+    private final String redirectUri = "auth://callback";
 
     private ActivityLoginBinding binding;
 
@@ -26,36 +35,79 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        // Makes activity scrollable if keyboard is shown
-        AndroidBug5497Workaround.assistActivity(this);
-
-        Bundle extras = getIntent().getExtras();
-        if (extras != null) {
-            String error = extras.getString(EXTRA_ERROR);
-            binding.error.setText(getString(R.string.login_login_error, error));
-
-            String email = extras.getString(EXTRA_EMAIL);
-            binding.email.setText(email);
-
-            String password = extras.getString(EXTRA_PASSWORD);
-            binding.password.setText(password);
-        }
     }
 
     /**
      * Called from the login button defined in the XML.
      */
     public void loginClicked(View view) {
-        if (binding.email.getText().toString().length() == 0 || binding.password.getText().toString().length() == 0) {
-            binding.error.setText(R.string.login_empty);
+        String clientId = getString(R.string.client_id);
+        String url = "https://api.netatmo.com/oauth2/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=read_station";
+
+        CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
+        customTabsIntent.launchUrl(this, Uri.parse(url));
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        Intent intent = getIntent();
+        if (intent == null) {
             return;
         }
-        binding.login.setEnabled(false);
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        intent.putExtra(EXTRA_EMAIL, binding.email.getText().toString());
-        intent.putExtra(EXTRA_PASSWORD, binding.password.getText().toString());
-        setResult(RESULTCODE_LOGIN, intent);
-        finish();
+
+        Uri data = intent.getData();
+        if (data == null) {
+            return;
+        }
+        if (data.getQueryParameterNames().contains("code")) {
+            changeLoadingIndicatorVisibility(View.VISIBLE);
+            binding.login.setEnabled(false);
+            String code = data.getQueryParameter("code");
+            LoginService service = ServiceGenerator.createService(LoginService.class);
+
+            String clientId = getString(R.string.client_id);
+            String clientSecret = getString(R.string.client_secret);
+
+            Call<AccessToken> call = service.getAccessToken(clientId, clientSecret, redirectUri, "authorization_code", code, "read_station");
+            call.enqueue(new NetatmoCallback<AccessToken>(this, binding.loadingIndicator) {
+                @Override
+                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+                    AccessToken body = response.body();
+                    if (response.code() == 200) {
+                        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
+                        long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
+                        tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                        LoginActivity.this.startActivity(intent);
+
+                    } else {
+                        binding.error.setText(getString(R.string.login_login_error, "HTTP code " + response.code()));
+                    }
+                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                    binding.login.setEnabled(true);
+                }
+            });
+
+        } else if (data.getQueryParameterNames().contains("error")) {
+            String error = data.getQueryParameter("error");
+            binding.error.setText(getString(R.string.login_login_error, error));
+            changeLoadingIndicatorVisibility(View.INVISIBLE);
+            binding.login.setEnabled(true);
+        }
+
+    }
+
+    private void changeLoadingIndicatorVisibility(final int visibility) {
+        if (onUiThread()) {
+            binding.loadingIndicator.setVisibility(visibility);
+        } else {
+            runOnUiThread(() -> binding.loadingIndicator.setVisibility(visibility));
+        }
+    }
+
+    private boolean onUiThread() {
+        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 }

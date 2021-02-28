@@ -9,7 +9,7 @@ Alternative Netatmo client. It shows the data from one indoor and one outdoor st
 Provide a `credentials.xml` under `/res/values/` (see [`/res/values/credentials_sample.xml`](https://github.com/kaiwinter/plain-atmo/blob/master/app/src/main/res/values/credentials_sample.xml)) with your `client_id` and `client_secret`.
 
 ## Screenshot
-![screenshot](https://raw.githubusercontent.com/kaiwinter/myatmo-android/assets/screenshot.png)
+![screenshot](https://raw.githubusercontent.com/kaiwinter/plain-atmo/assets/screenshot.png)
 
 ## Credits
 The app is based on this template: [FutureFurnitureUI-Android](https://github.com/Shashank02051997/FutureFurnitureUI-Android).

@@ -1,22 +1,14 @@
 package com.github.kaiwinter.myatmo.util;
 
-import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Socket;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 
 public class NetworkUtil {
 
-    /**
-     * Checks if the netatmo API can be reached.
-     *
-     * @return true if the netatmo API cannot be reached
-     */
-    public static boolean isOffline() {
-        try (Socket sock = new Socket()) {
-            sock.connect(new InetSocketAddress("api.netatmo.net", 443), 1500);
-            return false;
-        } catch (IOException e) {
-            return true;
-        }
+    public static boolean isOnline(Context context) {
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }

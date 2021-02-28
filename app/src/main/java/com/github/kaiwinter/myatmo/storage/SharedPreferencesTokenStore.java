@@ -5,12 +5,7 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
-import losty.netatmo.store.TokenStore;
-
-/**
- * Implements the persistence of the OAuth token for the netatmo-api library.
- */
-public class SharedPreferencesTokenStore implements TokenStore {
+public class SharedPreferencesTokenStore {
 
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
@@ -21,7 +16,6 @@ public class SharedPreferencesTokenStore implements TokenStore {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
-    @Override
     public void setTokens(String refreshToken, String accessToken, long expiresAt) {
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_REFRESH_TOKEN, refreshToken);
@@ -30,17 +24,14 @@ public class SharedPreferencesTokenStore implements TokenStore {
         editor.apply();
     }
 
-    @Override
     public String getRefreshToken() {
         return sharedPreferences.getString(KEY_REFRESH_TOKEN, null);
     }
 
-    @Override
     public String getAccessToken() {
         return sharedPreferences.getString(KEY_ACCESS_TOKEN, null);
     }
 
-    @Override
     public long getExpiresAt() {
         return sharedPreferences.getLong(KEY_EXPIRES_AT, 0);
     }

@@ -4,46 +4,41 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.ChartActivity;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.github.kaiwinter.myatmo.login.LoginActivity;
+import com.github.kaiwinter.myatmo.main.rest.StationsDataService;
+import com.github.kaiwinter.myatmo.main.rest.model.Body;
+import com.github.kaiwinter.myatmo.main.rest.model.Device;
+import com.github.kaiwinter.myatmo.main.rest.model.Module;
+import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
+import com.github.kaiwinter.myatmo.rest.APIError;
+import com.github.kaiwinter.myatmo.rest.NetatmoCallback;
+import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
-import com.github.kaiwinter.myatmo.util.ExceptionUtil;
 import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 
-import losty.netatmo.NetatmoHttpClient;
-import losty.netatmo.exceptions.NetatmoNotLoggedInException;
-import losty.netatmo.exceptions.NetatmoOAuthException;
-import losty.netatmo.exceptions.NetatmoParseException;
-import losty.netatmo.model.Measures;
-import losty.netatmo.model.Module;
-import losty.netatmo.model.Params;
-import losty.netatmo.model.Station;
+import retrofit2.Call;
+import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final List<String> NETATMO_TYPES = Arrays.asList(Params.TYPE_TEMPERATURE, Params.TYPE_HUMIDITY, Params.TYPE_CO2);
-    private final AtomicBoolean inLoginProcess = new AtomicBoolean(false);
     private ActivityMainBinding binding;
-    private NetatmoHttpClient client;
 
-    private String stationId;
+    private String deviceId;
     private String indoorName;
-    private String indoorId;
     private String outdoorName;
     private String outdoorId;
+
+    private SharedPreferencesTokenStore tokenstore;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,19 +47,15 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        String clientId = getString(R.string.client_id);
-        String clientSecret = getString(R.string.client_secret);
-
-        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(this);
-        //tokenstore.setTokens(null, null, -1);
-        client = new NetatmoHttpClient(clientId, clientSecret, tokenstore);
+        tokenstore = new SharedPreferencesTokenStore(this);
+//        tokenstore.setTokens(null, null, -1);
     }
 
     /**
      * Called from the refresh button defined in the XML.
      */
     public void refreshButtonClicked(View view) {
-        new Thread(this::getdata).start();
+        getdata();
     }
 
     public void detailButtonClicked(View view) {
@@ -82,23 +73,16 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void showIndoorChart(String measurementType) {
-        if (indoorId == null) {
-            return;
-        }
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
-        intent.putExtra(ChartActivity.STATION_ID, stationId);
-        intent.putExtra(ChartActivity.MODULE_ID, indoorId);
+        intent.putExtra(ChartActivity.DEVICE_ID, deviceId);
         intent.putExtra(ChartActivity.MODULE_NAME, indoorName);
         intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
         startActivity(intent);
     }
 
     private void showOutdoorChart(String measurementType) {
-        if (outdoorId == null) {
-            return;
-        }
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
-        intent.putExtra(ChartActivity.STATION_ID, stationId);
+        intent.putExtra(ChartActivity.DEVICE_ID, deviceId);
         intent.putExtra(ChartActivity.MODULE_ID, outdoorId);
         intent.putExtra(ChartActivity.MODULE_NAME, outdoorName);
         intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
@@ -108,125 +92,83 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (inLoginProcess.get()) {
-            return;
-        }
-        new Thread(this::getdata).start();
+        getdata();
     }
 
-    /**
-     * Calls {@link #getdata_internal()} and handles thrown exceptions. If moving away from lost-carrier:netatmo-api this can be improved.
-     */
     private void getdata() {
-        try {
-            changeLoadingIndicatorVisibility(View.VISIBLE);
-            getdata_internal();
-        } catch (NetatmoNotLoggedInException | NetatmoOAuthException | NetatmoParseException e) {
-            Log.e("myatmo", e.getMessage(), e);
-            Snackbar.make(binding.getRoot(), getString(R.string.error_loading_data, ExceptionUtil.unwrapException(e)), Snackbar.LENGTH_LONG).show();
-        } finally {
-            changeLoadingIndicatorVisibility(View.INVISIBLE);
-        }
-    }
-
-    private void getdata_internal() {
-        if (client.getOAuthStatus() == NetatmoHttpClient.OAuthStatus.NO_LOGIN) {
+        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             startLoginActivity();
             return;
         }
-        if (NetworkUtil.isOffline()) {
+        if (!NetworkUtil.isOnline(this)) {
             Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
+        changeLoadingIndicatorVisibility(View.VISIBLE);
 
-        List<Station> stationsData = client.getStationsData(null, null);
-        if (stationsData.isEmpty()) {
-            Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
-            return;
-        }
+        StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, tokenstore.getAccessToken());
+        Call<StationsData> stationsData = stationDataService.getStationsData(null);
+        stationsData.enqueue(new NetatmoCallback<StationsData>(this, binding.loadingIndicator) {
+            @Override
+            public void onResponse(Call<StationsData> call, Response<StationsData> response) {
+                if (response.code() == 200) {
+                    StationsData stationsData = response.body();
+                    Body body = stationsData.body;
+                    if (body != null) {
+                        List<Device> devices = body.devices;
+                        Device device = devices.get(0);
 
-        Station station = stationsData.get(0);
-        stationId = station.getId();
+                        ModuleVO moduleVO = new ModuleVO();
+                        moduleVO.moduleName = device.moduleName;
+                        moduleVO.beginTime = device.dashboardData.timeUtc;
+                        moduleVO.temperature = device.dashboardData.temperature;
+                        moduleVO.humidity = device.dashboardData.humidity;
 
-        for (Module module : station.getModules()) {
-            Measures measurement = client.getLastMeasurement(station, module, NETATMO_TYPES);
+                        deviceId = device.id;
+                        indoorName = device.moduleName;
+                        moduleVO.co2 = device.dashboardData.cO2;
+                        moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
 
-            if (measurement == null) {
-                continue;
+                        showInfo(moduleVO);
+
+                        // OUTDOOR
+                        List<Module> modules = device.modules;
+                        Module module = modules.get(0);
+
+                        ModuleVO moduleVO2 = new ModuleVO();
+                        moduleVO2.moduleName = module.moduleName;
+                        moduleVO2.beginTime = module.dashboardData.timeUtc;
+                        moduleVO2.temperature = module.dashboardData.temperature;
+                        moduleVO2.humidity = module.dashboardData.humidity;
+
+                        outdoorId = module.id;
+                        outdoorName = module.moduleName;
+                        moduleVO2.moduleType = ModuleVO.ModuleType.OUTDOOR;
+
+                        showInfo(moduleVO2);
+                    }
+                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                } else {
+                    APIError apiError = ServiceGenerator.parseError(response);
+                    Snackbar snackbar = Snackbar.make(binding.getRoot(), apiError.error.message, Snackbar.LENGTH_LONG);
+
+                    if (response.code() == 401 || response.code() == 403) {
+                        snackbar.setAction("Neu einloggen", v -> {
+                            tokenstore.setTokens(null, null, -1);
+                            startLoginActivity();
+                        });
+                    }
+                    snackbar.show();
+                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                }
             }
+        });
 
-            ModuleVO moduleVO = new ModuleVO();
-            moduleVO.moduleName = module.getName();
-            moduleVO.beginTime = measurement.getBeginTime();
-            moduleVO.temperature = measurement.getTemperature();
-            moduleVO.humidity = measurement.getHumidity();
-
-            if (module.getType().equals(Module.TYPE_INDOOR)) {
-                indoorId = module.getId();
-                indoorName = module.getName();
-                moduleVO.co2 = measurement.getCO2();
-                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
-            } else if (module.getType().equals(Module.TYPE_OUTDOOR)) {
-                outdoorId = module.getId();
-                outdoorName = module.getName();
-                moduleVO.moduleType = ModuleVO.ModuleType.OUTDOOR;
-            } else {
-                // ignore, maybe extend later
-            }
-
-            showInfo(moduleVO);
-        }
     }
 
     private void startLoginActivity() {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivityForResult(intent, 0);
-    }
-
-    /**
-     * Called from a Runnable in onActivityResult() that calls the REST service to log-in.
-     * Meanwhile onResume() is called which triggers a startLoginActivity(), so the "inLoginProcess"-check is necessary only there.
-     *
-     * @param errorMessage Error message to show the user on the login screen
-     * @param email        the email which was entered previously
-     * @param password     the password which was entered previously
-     */
-    private void startLoginActivityWithErrorMessage(String errorMessage, String email, String password) {
-        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        intent.putExtra(LoginActivity.EXTRA_ERROR, errorMessage);
-        intent.putExtra(LoginActivity.EXTRA_EMAIL, email);
-        intent.putExtra(LoginActivity.EXTRA_PASSWORD, password);
-        startActivityForResult(intent, 0);
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-
-        if (resultCode != LoginActivity.RESULTCODE_LOGIN) {
-            // back pressed on login screen -> exit app
-            finish();
-            return;
-        }
-        final String email = data.getStringExtra(LoginActivity.EXTRA_EMAIL);
-        final String password = data.getStringExtra(LoginActivity.EXTRA_PASSWORD);
-
-        if (TextUtils.isEmpty(email) || TextUtils.isEmpty(password)) {
-            String error = getString(R.string.login_empty);
-            startLoginActivityWithErrorMessage(error, email, password);
-        }
-        inLoginProcess.set(true);
-        new Thread(() -> {
-            try {
-                client.login(email, password);
-                getdata();
-            } catch (NetatmoOAuthException e) {
-                String error = ExceptionUtil.unwrapException(e);
-                startLoginActivityWithErrorMessage(error, email, password);
-            } finally {
-                inLoginProcess.set(false);
-            }
-        }).start();
     }
 
     private void changeLoadingIndicatorVisibility(final int visibility) {
