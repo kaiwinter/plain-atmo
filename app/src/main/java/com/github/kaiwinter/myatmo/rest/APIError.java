@@ -4,7 +4,7 @@ public class APIError {
 
     public Error error;
 
-    public class Error {
+    public static class Error {
         public Integer code;
         public String message;
     }

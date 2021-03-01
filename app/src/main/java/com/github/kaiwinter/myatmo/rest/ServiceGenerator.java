@@ -5,12 +5,8 @@ import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import java.io.IOException;
-
-import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -38,18 +34,14 @@ public class ServiceGenerator {
     }
 
     public static <S> S createService(Class<S> serviceClass, final String authToken) {
-
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
         OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
-                .addInterceptor(new Interceptor() {
-                    @Override
-                    public Response intercept(Interceptor.Chain chain) throws IOException {
-                        Request newRequest = chain.request().newBuilder()
-                                .addHeader("Authorization", "Bearer " + authToken)
-                                .build();
-                        return chain.proceed(newRequest);
-                    }
+                .addInterceptor(chain -> {
+                    Request newRequest = chain.request().newBuilder()
+                            .addHeader("Authorization", "Bearer " + authToken)
+                            .build();
+                    return chain.proceed(newRequest);
                 })
                 .build();
 
@@ -68,10 +60,9 @@ public class ServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    public static APIError parseError(retrofit2.Response response) {
+    public static APIError parseError(retrofit2.Response<?> response) {
         Gson gson = new Gson();
-        APIError message = gson.fromJson(response.errorBody().charStream(), APIError.class);
-        return message;
+        return gson.fromJson(response.errorBody().charStream(), APIError.class);
     }
 
 }

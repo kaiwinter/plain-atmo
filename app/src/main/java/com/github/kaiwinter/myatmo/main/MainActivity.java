@@ -163,10 +163,6 @@ public class MainActivity extends AppCompatActivity {
                     } else {
                         Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
                     }
-                    runOnUiThread(() -> {
-                        binding.loadingIndicator.setVisibility(View.INVISIBLE);
-                        binding.refreshButton.setEnabled(true);
-                    });
 
                 } else {
                     APIError apiError = ServiceGenerator.parseError(response);
@@ -180,11 +176,11 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                     snackbar.show();
-                    runOnUiThread(() -> {
-                        binding.loadingIndicator.setVisibility(View.INVISIBLE);
-                        binding.refreshButton.setEnabled(true);
-                    });
                 }
+                runOnUiThread(() -> {
+                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                    binding.refreshButton.setEnabled(true);
+                });
             }
 
             @Override
