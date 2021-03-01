@@ -72,9 +72,10 @@ public class LoginActivity extends AppCompatActivity {
             call.enqueue(new Callback<AccessToken>() {
                 @Override
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                    AccessToken body = response.body();
+
                     if (response.code() == 200) {
                         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
+                        AccessToken body = response.body();
                         long expiresAt = System.currentTimeMillis() / 1000 + body.expiresIn;
                         tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         finish(); // return to MainActivity
