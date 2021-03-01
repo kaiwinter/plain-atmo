@@ -8,11 +8,11 @@ public class DateTimeUtil {
     /**
      * Converts a timestamp to a timestamp in short format, e.g. 11:10.
      *
-     * @param timestamp the timestamp
+     * @param timestamp the timestamp in seconds
      * @return the String representation
      */
     public static String getDateAsShortTimeString(long timestamp) {
-        Date date = new Date(timestamp);
+        Date date = new Date(timestamp * 1000);
         DateFormat formatter = SimpleDateFormat.getTimeInstance(3);
         return formatter.format(date);
     }
