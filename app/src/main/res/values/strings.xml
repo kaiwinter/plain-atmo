@@ -4,8 +4,7 @@
     <string name="display_timestamp" translatable="false">(%1$s)</string>
     <string name="display_humidity" translatable="false">%1$,.0f%%</string>
     <string name="display_co2" translatable="false">%1$,.0fppm</string>
-    <string name="login_email">Email Address</string>
-    <string name="login_password">Password</string>x
+    x
     <string name="login_login">Netatmo Login</string>
     <string name="login_login_button">Login</string>
     <string name="login_login_error">Login error: %1$s</string>
@@ -13,7 +12,6 @@
     <string name="temperature">Temperature</string>
     <string name="humidity">Humidity</string>
     <string name="co2" translatable="false">CO2</string>
-    <string name="login_empty">Mail Address and Password must not be empty</string>
     <string name="no_connection">No internet connection</string>
     <string name="error_loading_data">Error loading data: %1$s</string>
     <string name="chart_no_data">No chart data available</string>

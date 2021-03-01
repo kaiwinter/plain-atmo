@@ -15,6 +15,7 @@ import com.github.kaiwinter.myatmo.chart.rest.MeasureService;
 import com.github.kaiwinter.myatmo.chart.rest.model.Measure;
 import com.github.kaiwinter.myatmo.chart.rest.model.Measurement;
 import com.github.kaiwinter.myatmo.databinding.ActivityChartBinding;
+import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.main.Params;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
@@ -51,6 +52,7 @@ public class ChartActivity extends AppCompatActivity {
     private String measurementType;
 
     private SharedPreferencesTokenStore tokenstore;
+    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,6 +76,7 @@ public class ChartActivity extends AppCompatActivity {
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
         tokenstore = new SharedPreferencesTokenStore(this);
+        accessTokenManager = new AccessTokenManager(this);
     }
 
     @Override
@@ -83,17 +86,22 @@ public class ChartActivity extends AppCompatActivity {
     }
 
     private void getdata() {
-
         if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             finish(); // return to MainActivity for login
             return;
         }
+
         if (!NetworkUtil.isOnline(this)) {
             Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
 
         runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
+
+        if (accessTokenManager.accessTokenRefreshNeeded()) {
+            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
+            return;
+        }
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);

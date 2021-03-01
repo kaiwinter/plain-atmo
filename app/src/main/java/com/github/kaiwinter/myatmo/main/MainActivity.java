@@ -3,18 +3,15 @@ package com.github.kaiwinter.myatmo.main;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.util.Consumer;
 
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.ChartActivity;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
+import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.login.LoginActivity;
-import com.github.kaiwinter.myatmo.login.rest.LoginService;
-import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
 import com.github.kaiwinter.myatmo.main.rest.StationsDataService;
 import com.github.kaiwinter.myatmo.main.rest.model.Body;
 import com.github.kaiwinter.myatmo.main.rest.model.Device;
@@ -26,7 +23,6 @@ import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.google.android.material.snackbar.Snackbar;
 
-import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
@@ -36,7 +32,6 @@ import retrofit2.Response;
 public class MainActivity extends AppCompatActivity {
 
     private static final String TAG = "MainActivity";
-    private static final long EXPIRE_TOLERANCE_SECONDS = 60;
 
     private ActivityMainBinding binding;
 
@@ -46,6 +41,7 @@ public class MainActivity extends AppCompatActivity {
     private String outdoorId;
 
     private SharedPreferencesTokenStore tokenstore;
+    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         tokenstore = new SharedPreferencesTokenStore(this);
+        accessTokenManager = new AccessTokenManager(this);
 //        tokenstore.setTokens(null, null, -1);
     }
 
@@ -107,18 +104,19 @@ public class MainActivity extends AppCompatActivity {
             startLoginActivity();
             return;
         }
+
         if (!NetworkUtil.isOnline(this)) {
             Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
+
         runOnUiThread(() -> {
             binding.loadingIndicator.setVisibility(View.VISIBLE);
             binding.refreshButton.setEnabled(false);
         });
 
-        if (accessTokenRefreshNeeded()) {
-            Snackbar.make(binding.getRoot(), "refreshing access token", Snackbar.LENGTH_LONG).show();
-            refreshAccessToken(errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
+        if (accessTokenManager.accessTokenRefreshNeeded()) {
+            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
             return;
         }
 
@@ -196,45 +194,6 @@ public class MainActivity extends AppCompatActivity {
                     binding.loadingIndicator.setVisibility(View.INVISIBLE);
                     binding.refreshButton.setEnabled(true);
                 });
-            }
-        });
-    }
-
-    private boolean accessTokenRefreshNeeded() {
-        long expiresAt = tokenstore.getExpiresAt();
-        long currentTimestamp = new Date().getTime() / 1000;
-
-        return currentTimestamp + EXPIRE_TOLERANCE_SECONDS >= expiresAt;
-    }
-
-    private void refreshAccessToken(Consumer<String> onError) {
-        LoginService loginService = ServiceGenerator.createService(LoginService.class);
-
-        String clientId = getString(R.string.client_id);
-        String clientSecret = getString(R.string.client_secret);
-        String refreshToken = tokenstore.getRefreshToken();
-        Call<AccessToken> call = loginService.refreshToken(clientId, clientSecret, "refresh_token", refreshToken);
-        call.enqueue(new Callback<AccessToken>() {
-            @Override
-            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                Log.e(TAG, "success");
-
-                if (response.code() == 200) {
-                    AccessToken body = response.body();
-                    long expiresAt = System.currentTimeMillis() / 1000 + body.expiresIn;
-                    tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
-                    getdata(); // retry loading
-                } else {
-                    APIError apiError = ServiceGenerator.parseError(response);
-                    String errormessage = apiError.error.message + " (" + response.code() + ", " + apiError.error.code + ")";
-                    onError.accept(errormessage);
-                }
-            }
-
-            @Override
-            public void onFailure(Call<AccessToken> call, Throwable t) {
-                String errormessage = getString(R.string.main_load_error, t.getMessage());
-                onError.accept(errormessage);
             }
         });
     }
