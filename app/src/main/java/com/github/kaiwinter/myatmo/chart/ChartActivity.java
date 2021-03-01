@@ -2,7 +2,6 @@ package com.github.kaiwinter.myatmo.chart;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,7 +17,6 @@ import com.github.kaiwinter.myatmo.chart.rest.model.Measurement;
 import com.github.kaiwinter.myatmo.databinding.ActivityChartBinding;
 import com.github.kaiwinter.myatmo.main.Params;
 import com.github.kaiwinter.myatmo.rest.APIError;
-import com.github.kaiwinter.myatmo.rest.NetatmoCallback;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
@@ -81,7 +79,7 @@ public class ChartActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        new Thread(this::getdata).start();
+        getdata();
     }
 
     private void getdata() {
@@ -95,13 +93,12 @@ public class ChartActivity extends AppCompatActivity {
             return;
         }
 
-        changeLoadingIndicatorVisibility(View.VISIBLE);
+        runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
 
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date startDate = calendar.getTime();
 
-        //
         ValueSupplier valueSupplier;
         if (Params.TYPE_TEMPERATURE.equals(measurementType)) {
             valueSupplier = new ValueSupplier.TemperatureValueSupplier();
@@ -115,13 +112,14 @@ public class ChartActivity extends AppCompatActivity {
         }
 
         MeasureService service = ServiceGenerator.createService(MeasureService.class, tokenstore.getAccessToken());
-        Call<Measure> max = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
-        max.enqueue(new NetatmoCallback<Measure>(this, binding.loadingIndicator) {
+        Call<Measure> call = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
+        call.enqueue(new Callback<Measure>() {
             @Override
             public void onResponse(Call<Measure> call, Response<Measure> response) {
                 if (response.code() != 200) {
                     APIError apiError = ServiceGenerator.parseError(response);
-                    Snackbar snackbar = Snackbar.make(binding.getRoot(), apiError.error.message, Snackbar.LENGTH_LONG);
+                    String detailMessage = apiError.error.message + "(" + apiError.error.code + ")";
+                    Snackbar snackbar = Snackbar.make(binding.getRoot(), detailMessage, Snackbar.LENGTH_LONG);
 
                     if (response.code() == 401 || response.code() == 403) {
                         snackbar.setAction("Neu einloggen", v -> {
@@ -130,7 +128,7 @@ public class ChartActivity extends AppCompatActivity {
                         });
                     }
                     snackbar.show();
-                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                    runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
                     return;
                 }
                 Measure responseBody = response.body();
@@ -169,8 +167,21 @@ public class ChartActivity extends AppCompatActivity {
                 binding.chart.setMarker(markerView);
 
                 binding.chart.getDescription().setEnabled(false);
-                runOnUiThread(() -> binding.chart.invalidate());
-                changeLoadingIndicatorVisibility(View.INVISIBLE);
+
+                runOnUiThread(() -> {
+                    binding.chart.invalidate();
+                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                });
+            }
+
+            @Override
+            public void onFailure(Call<Measure> call, Throwable t) {
+                runOnUiThread(() -> {
+                    String message = getString(R.string.main_load_error, t.getMessage());
+                    Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
+
+                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                });
             }
         });
 
@@ -190,17 +201,5 @@ public class ChartActivity extends AppCompatActivity {
             finish();
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    private void changeLoadingIndicatorVisibility(final int visibility) {
-        if (onUiThread()) {
-            binding.loadingIndicator.setVisibility(visibility);
-        } else {
-            runOnUiThread(() -> binding.loadingIndicator.setVisibility(visibility));
-        }
-    }
-
-    private boolean onUiThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 }

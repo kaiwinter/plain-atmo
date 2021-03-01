@@ -85,8 +85,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:fontFamily="@font/calibri"
-                            android:text="To use this app you habe to log into your Netatmo account. This happens in ..."
-                            android:textAlignment="center"
+                            android:text="@string/login_introduction"
                             android:textColor="#000000"
                             android:textSize="16sp" />
 

@@ -2,8 +2,8 @@ package com.github.kaiwinter.myatmo.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Looper;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -18,18 +18,21 @@ import com.github.kaiwinter.myatmo.main.rest.model.Device;
 import com.github.kaiwinter.myatmo.main.rest.model.Module;
 import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
 import com.github.kaiwinter.myatmo.rest.APIError;
-import com.github.kaiwinter.myatmo.rest.NetatmoCallback;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.Date;
 import java.util.List;
 
 import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final String TAG = "MainActivity";
 
     private ActivityMainBinding binding;
 
@@ -104,11 +107,21 @@ public class MainActivity extends AppCompatActivity {
             Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
-        changeLoadingIndicatorVisibility(View.VISIBLE);
+        binding.loadingIndicator.setVisibility(View.VISIBLE);
+        binding.refreshButton.setEnabled(false);
+
+        // Check token validity
+        long expiresAt = tokenstore.getExpiresAt();
+        long date = new Date().getTime() / 1000;
+
+        if (date >= expiresAt) {
+            Log.i(TAG, "Access token expired");
+
+        }
 
         StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, tokenstore.getAccessToken());
         Call<StationsData> stationsData = stationDataService.getStationsData(null);
-        stationsData.enqueue(new NetatmoCallback<StationsData>(this, binding.loadingIndicator) {
+        stationsData.enqueue(new Callback<StationsData>() {
             @Override
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
                 if (response.code() == 200) {
@@ -147,10 +160,15 @@ public class MainActivity extends AppCompatActivity {
 
                         showInfo(moduleVO2);
                     }
-                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                    runOnUiThread(() -> {
+                        binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                        binding.refreshButton.setEnabled(true);
+                    });
+
                 } else {
                     APIError apiError = ServiceGenerator.parseError(response);
-                    Snackbar snackbar = Snackbar.make(binding.getRoot(), apiError.error.message, Snackbar.LENGTH_LONG);
+                    String detailMessage = apiError.error.message + "(" + apiError.error.code + ")";
+                    Snackbar snackbar = Snackbar.make(binding.getRoot(), detailMessage, Snackbar.LENGTH_LONG);
 
                     if (response.code() == 401 || response.code() == 403) {
                         snackbar.setAction("Neu einloggen", v -> {
@@ -159,8 +177,22 @@ public class MainActivity extends AppCompatActivity {
                         });
                     }
                     snackbar.show();
-                    changeLoadingIndicatorVisibility(View.INVISIBLE);
+                    runOnUiThread(() -> {
+                        binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                        binding.refreshButton.setEnabled(true);
+                    });
                 }
+            }
+
+            @Override
+            public void onFailure(Call<StationsData> call, Throwable t) {
+                runOnUiThread(() -> {
+                    String message = getString(R.string.main_load_error, t.getMessage());
+                    Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
+
+                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
+                    binding.refreshButton.setEnabled(true);
+                });
             }
         });
 
@@ -169,18 +201,6 @@ public class MainActivity extends AppCompatActivity {
     private void startLoginActivity() {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
         startActivityForResult(intent, 0);
-    }
-
-    private void changeLoadingIndicatorVisibility(final int visibility) {
-        if (onUiThread()) {
-            binding.loadingIndicator.setVisibility(visibility);
-        } else {
-            runOnUiThread(() -> binding.loadingIndicator.setVisibility(visibility));
-        }
-    }
-
-    private boolean onUiThread() {
-        return Looper.getMainLooper().getThread() == Thread.currentThread();
     }
 
     private void showInfo(final ModuleVO moduleVO) {

@@ -16,4 +16,11 @@ public interface LoginService {
                                      @Field("grant_type") String grantType,
                                      @Field("code") String code,
                                      @Field("scope") String scope);
+
+    @FormUrlEncoded
+    @POST("/oauth2/token")
+    Call<AccessToken> refreshToken(@Field("client_id") String clientId,
+                                   @Field("client_secret") String clientSecret,
+                                   @Field("grant_type") String grantType,
+                                   @Field("refresh_token") String refreshToken);
 }
