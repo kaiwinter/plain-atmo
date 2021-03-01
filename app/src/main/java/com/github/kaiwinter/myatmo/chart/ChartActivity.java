@@ -130,7 +130,7 @@ public class ChartActivity extends AppCompatActivity {
                     Snackbar snackbar = Snackbar.make(binding.getRoot(), detailMessage, Snackbar.LENGTH_LONG);
 
                     if (response.code() == 401 || response.code() == 403) {
-                        snackbar.setAction("Neu einloggen", v -> {
+                        snackbar.setAction(R.string.logout_login, v -> {
                             tokenstore.setTokens(null, null, -1);
                             finish();
                         });

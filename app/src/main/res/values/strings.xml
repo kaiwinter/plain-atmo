@@ -18,4 +18,5 @@
     <string name="chart_timespan">" (last 24 hours)"</string>
     <string name="no_station_data">No station data available. Please try again.</string>
     <string name="login_introduction">To allow the app to load data from your weatherstation you first have to login with your Netatmo account. This happens in a browser window on the website of Netatmo. That way the app doesn´t see your login details it just gets an access token from Netatmo.</string>
+    <string name="logout_login">Re-Login</string>
 </resources>
