@@ -127,8 +127,8 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
                 if (response.code() == 200) {
                     StationsData stationsData = response.body();
-                    Body body = stationsData.body;
-                    if (body != null) {
+                    if (stationsData != null && stationsData.body != null) {
+                        Body body = stationsData.body;
                         List<Device> devices = body.devices;
                         Device device = devices.get(0);
 
@@ -160,6 +160,8 @@ public class MainActivity extends AppCompatActivity {
                         moduleVO2.moduleType = ModuleVO.ModuleType.OUTDOOR;
 
                         showInfo(moduleVO2);
+                    } else {
+                        Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
                     }
                     runOnUiThread(() -> {
                         binding.loadingIndicator.setVisibility(View.INVISIBLE);
