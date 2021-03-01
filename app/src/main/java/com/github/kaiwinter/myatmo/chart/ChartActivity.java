@@ -126,7 +126,7 @@ public class ChartActivity extends AppCompatActivity {
             public void onResponse(Call<Measure> call, Response<Measure> response) {
                 if (response.code() != 200) {
                     APIError apiError = ServiceGenerator.parseError(response);
-                    String detailMessage = apiError.error.message + "(" + apiError.error.code + ")";
+                    String detailMessage = apiError.error.message + " (" + apiError.error.code + ")";
                     Snackbar snackbar = Snackbar.make(binding.getRoot(), detailMessage, Snackbar.LENGTH_LONG);
 
                     if (response.code() == 401 || response.code() == 403) {
