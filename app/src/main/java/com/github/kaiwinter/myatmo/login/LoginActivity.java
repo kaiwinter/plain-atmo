@@ -89,13 +89,13 @@ public class LoginActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<AccessToken> call, Throwable t) {
-                    hideLoadingState(getString(R.string.login_login_error, t.getMessage()));
+                    hideLoadingState(t.getMessage());
                 }
             });
 
         } else if (data.getQueryParameterNames().contains("error")) {
             String error = data.getQueryParameter("error");
-            hideLoadingState(getString(R.string.login_login_error, error));
+            hideLoadingState(error);
         }
     }
 
