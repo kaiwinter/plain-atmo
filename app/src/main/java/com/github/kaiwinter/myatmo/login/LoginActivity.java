@@ -23,7 +23,7 @@ import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private final String redirectUri = "auth://callback";
+    private static final String redirectUri = "com.github.kaiwinter.myatmo://login";
 
     private ActivityLoginBinding binding;
 
