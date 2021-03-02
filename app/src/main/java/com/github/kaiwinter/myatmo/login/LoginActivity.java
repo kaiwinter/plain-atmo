@@ -76,7 +76,7 @@ public class LoginActivity extends AppCompatActivity {
                     if (response.code() == 200) {
                         SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
                         AccessToken body = response.body();
-                        long expiresAt = System.currentTimeMillis() / 1000 + body.expiresIn;
+                        long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
                         tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         finish(); // return to MainActivity
                     } else {

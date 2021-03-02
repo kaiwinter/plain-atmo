@@ -31,7 +31,7 @@ public class AccessTokenManager {
 
     public boolean accessTokenRefreshNeeded() {
         long expiresAt = tokenstore.getExpiresAt();
-        long currentTimestamp = new Date().getTime() / 1000;
+        long currentTimestamp = System.currentTimeMillis();
 
         return currentTimestamp + EXPIRE_TOLERANCE_SECONDS >= expiresAt;
     }
@@ -50,7 +50,7 @@ public class AccessTokenManager {
 
                 if (response.code() == 200) {
                     AccessToken body = response.body();
-                    long expiresAt = System.currentTimeMillis() / 1000 + body.expiresIn;
+                    long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
                     tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                     onSuccess.run();
                 } else {
