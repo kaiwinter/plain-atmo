@@ -9,6 +9,6 @@
     <string name="chart_no_data">Keine Daten verfügbar</string>
     <string name="chart_timespan">" (letzte 24 Stunden)"</string>
     <string name="no_station_data">Keine Stationsdaten verfügbar.</string>
-    <string name="login_introduction">Damit die App Daten deiner Wetterstation abrufen kann, musst du dich zuerst mit deinem Netatmo-Account einloggen. Dies geschieht in einem Browserfenster auf der Webseite von Netatmo. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern ledigleich ein Berechtigungstoken von Netatmo.</string>
+    <string name="login_introduction">Damit die App Daten deiner Wetterstation abrufen kann, musst du dich zuerst mit deinem Netatmo-Account einloggen. Dies geschieht in einem Browserfenster auf der Webseite von Netatmo. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Netatmo.</string>
     <string name="logout_login">Neu einloggen</string>
 </resources>
