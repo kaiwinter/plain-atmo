@@ -13,6 +13,7 @@ import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.databinding.ActivityLoginBinding;
 import com.github.kaiwinter.myatmo.login.rest.LoginService;
 import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
+import com.github.kaiwinter.myatmo.main.MainActivity;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
@@ -78,7 +79,8 @@ public class LoginActivity extends AppCompatActivity {
                         AccessToken body = response.body();
                         long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
                         tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
-                        finish(); // return to MainActivity
+                        // finish(); // return to MainActivity
+                        startMainActivity(); // calling finish() doesn't work if firefox was used for OAUTH flow.
                     } else {
                         APIError apiError = ServiceGenerator.parseError(response);
                         // Print HTTP error code and message and code from API Response
@@ -97,6 +99,13 @@ public class LoginActivity extends AppCompatActivity {
             String error = data.getQueryParameter("error");
             hideLoadingState(error);
         }
+    }
+
+    private void startMainActivity() {
+        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+        // Make the app exit if back is pressed on login activity. Else the user is trapped there
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void showLoadingState() {

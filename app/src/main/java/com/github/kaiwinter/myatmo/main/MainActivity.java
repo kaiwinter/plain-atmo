@@ -196,7 +196,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void startLoginActivity() {
         Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-        startActivityForResult(intent, 0);
+        // Make the app exit if back is pressed on main activity. Else the user returns to the Login
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     private void showInfo(final ModuleVO moduleVO) {
