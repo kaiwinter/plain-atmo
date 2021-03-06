@@ -19,8 +19,6 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class AccessTokenManager {
-
-    private static final String TAG = AccessTokenManager.class.getSimpleName();
     private static final long EXPIRE_TOLERANCE_SECONDS = 60;
 
     private final SharedPreferencesTokenStore tokenstore;
@@ -46,8 +44,6 @@ public class AccessTokenManager {
         call.enqueue(new Callback<AccessToken>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                Log.e(TAG, "success");
-
                 if (response.code() == 200) {
                     AccessToken body = response.body();
                     long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
@@ -62,7 +58,6 @@ public class AccessTokenManager {
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-                Log.e(TAG, "fail");
                 String errormessage = context.getString(R.string.main_load_error, t.getMessage());
                 onError.accept(errormessage);
             }
