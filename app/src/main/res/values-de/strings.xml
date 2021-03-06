@@ -11,5 +11,5 @@
     <string name="login_introduction">Damit die App Daten deiner Wetterstation abrufen kann, musst du dich zuerst mit deinem Netatmo-Account einloggen. Dies geschieht in einem Browserfenster auf der Webseite von Netatmo. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Netatmo.</string>
     <string name="logout_login">Neu einloggen</string>
     <string name="netatmo_connection_error">Verbindung zu Netatmo fehlgeschlagen</string>
-    <string name="indoor_module_selection">Bitte ein Aussen-Modul wählen</string>
+    <string name="indoor_module_selection">Bitte ein Außen-Modul wählen</string>
 </resources>
