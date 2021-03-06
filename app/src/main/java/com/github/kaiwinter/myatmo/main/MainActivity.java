@@ -122,7 +122,7 @@ public class MainActivity extends AppCompatActivity {
         stationsData.enqueue(new Callback<StationsData>() {
             @Override
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
-                if (response.code() == 200) {
+                if (response.isSuccessful()) {
                     StationsData stationsData = response.body();
                     if (stationsData != null && stationsData.body != null) {
                         Body body = stationsData.body;

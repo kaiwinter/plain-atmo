@@ -41,7 +41,7 @@ public class AccessTokenManager {
         call.enqueue(new Callback<AccessToken>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-                if (response.code() == 200) {
+                if (response.isSuccessful()) {
                     AccessToken body = response.body();
                     long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
                     tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
