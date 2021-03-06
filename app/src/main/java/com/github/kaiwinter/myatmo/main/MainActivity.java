@@ -108,13 +108,13 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        runOnUiThread(() -> {
-            binding.loadingIndicator.setVisibility(View.VISIBLE);
-            binding.refreshButton.setEnabled(false);
-        });
+        showLoadingState();
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
+            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> {
+                Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
+                hideLoadingState();
+            });
             return;
         }
 
@@ -175,22 +175,29 @@ public class MainActivity extends AppCompatActivity {
                     }
                     snackbar.show();
                 }
-                runOnUiThread(() -> {
-                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
-                    binding.refreshButton.setEnabled(true);
-                });
+                hideLoadingState();
             }
 
             @Override
             public void onFailure(Call<StationsData> call, Throwable t) {
-                runOnUiThread(() -> {
-                    String message = getString(R.string.main_load_error, t.getMessage());
-                    Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
-
-                    binding.loadingIndicator.setVisibility(View.INVISIBLE);
-                    binding.refreshButton.setEnabled(true);
-                });
+                String message = getString(R.string.main_load_error, t.getMessage());
+                Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
+                hideLoadingState();
             }
+        });
+    }
+
+    private void showLoadingState() {
+        runOnUiThread(() -> {
+            binding.loadingIndicator.setVisibility(View.VISIBLE);
+            binding.refreshButton.setEnabled(false);
+        });
+    }
+
+    private void hideLoadingState() {
+        runOnUiThread(() -> {
+            binding.loadingIndicator.setVisibility(View.INVISIBLE);
+            binding.refreshButton.setEnabled(true);
         });
     }
 
