@@ -20,7 +20,7 @@ import com.github.kaiwinter.myatmo.main.rest.model.Module;
 import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
-import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.ArrayList;
@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity {
     private String outdoorName;
     private String outdoorId;
 
-    private SharedPreferencesTokenStore tokenstore;
+    private SharedPreferencesStore preferencesStore;
     private AccessTokenManager accessTokenManager;
 
     @Override
@@ -50,9 +50,9 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
-        tokenstore = new SharedPreferencesTokenStore(this);
+        preferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
-//        tokenstore.setTokens(null, null, -1);
+//        preferencesStore.setTokens(null, null, -1);
     }
 
     /**
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getdata() {
-        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
+        if (TextUtils.isEmpty(preferencesStore.getAccessToken())) {
             startLoginActivity();
             return;
         }
@@ -120,7 +120,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, tokenstore.getAccessToken());
+        StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, preferencesStore.getAccessToken());
         Call<StationsData> stationsData = stationDataService.getStationsData(null);
         stationsData.enqueue(new Callback<StationsData>() {
             @Override
@@ -160,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                             showIndoorModuleData(modules.get(0));
 
                         } else if (modules.size() > 1) {
-                            String defaultIndoorModule = tokenstore.getDefaultOutdoorModule();
+                            String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
                             if (defaultIndoorModule != null) {
                                 boolean found = false;
                                 for (Module module : modules) {
@@ -190,7 +190,7 @@ public class MainActivity extends AppCompatActivity {
 
                     if (response.code() == 401 || response.code() == 403) {
                         snackbar.setAction(R.string.logout_login, v -> {
-                            tokenstore.setTokens(null, null, -1);
+                            preferencesStore.setTokens(null, null, -1);
                             startLoginActivity();
                         });
                     }
@@ -209,7 +209,7 @@ public class MainActivity extends AppCompatActivity {
                         .setTitle(R.string.indoor_module_selection)
                         .setItems(moduleNames.toArray(new String[0]), (dialog1, position) -> {
                             Module module = modules.get(position);
-                            tokenstore.setDefaultOutdoorModule(module.id);
+                            preferencesStore.setDefaultOutdoorModule(module.id);
 
                             showIndoorModuleData(module);
                         });

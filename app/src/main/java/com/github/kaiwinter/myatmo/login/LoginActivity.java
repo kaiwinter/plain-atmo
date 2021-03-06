@@ -16,7 +16,7 @@ import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
 import com.github.kaiwinter.myatmo.main.MainActivity;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
-import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -75,10 +75,10 @@ public class LoginActivity extends AppCompatActivity {
                 public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 
                     if (response.isSuccessful()) {
-                        SharedPreferencesTokenStore tokenstore = new SharedPreferencesTokenStore(LoginActivity.this);
+                        SharedPreferencesStore preferencesStore = new SharedPreferencesStore(LoginActivity.this);
                         AccessToken body = response.body();
                         long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
-                        tokenstore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                        preferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                         // finish(); // return to MainActivity
                         startMainActivity(); // calling finish() doesn't work if firefox was used for OAUTH flow.
                     } else {

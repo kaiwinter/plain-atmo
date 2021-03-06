@@ -19,7 +19,7 @@ import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.main.Params;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
-import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
+import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
@@ -50,7 +50,7 @@ public class ChartActivity extends AppCompatActivity {
     private String deviceId;
     private String measurementType;
 
-    private SharedPreferencesTokenStore tokenstore;
+    private SharedPreferencesStore preferencesStore;
     private AccessTokenManager accessTokenManager;
 
     @Override
@@ -74,7 +74,7 @@ public class ChartActivity extends AppCompatActivity {
         supportActionBar.setTitle(moduleName);
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-        tokenstore = new SharedPreferencesTokenStore(this);
+        preferencesStore = new SharedPreferencesStore(this);
         accessTokenManager = new AccessTokenManager(this);
     }
 
@@ -85,7 +85,7 @@ public class ChartActivity extends AppCompatActivity {
     }
 
     private void getdata() {
-        if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
+        if (TextUtils.isEmpty(preferencesStore.getAccessToken())) {
             finish(); // return to MainActivity for login
             return;
         }
@@ -113,7 +113,7 @@ public class ChartActivity extends AppCompatActivity {
             return;
         }
 
-        MeasureService service = ServiceGenerator.createService(MeasureService.class, tokenstore.getAccessToken());
+        MeasureService service = ServiceGenerator.createService(MeasureService.class, preferencesStore.getAccessToken());
         Call<Measure> call = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
         call.enqueue(new Callback<Measure>() {
             @Override
@@ -125,7 +125,7 @@ public class ChartActivity extends AppCompatActivity {
 
                     if (response.code() == 401 || response.code() == 403) {
                         snackbar.setAction(R.string.logout_login, v -> {
-                            tokenstore.setTokens(null, null, -1);
+                            preferencesStore.setTokens(null, null, -1);
                             finish();
                         });
                     }

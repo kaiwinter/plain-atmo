@@ -5,17 +5,17 @@ import android.content.SharedPreferences;
 
 import androidx.preference.PreferenceManager;
 
-public class SharedPreferencesTokenStore {
+public class SharedPreferencesStore {
 
-    private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
-    private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
-    private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
+    private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN"; // OAUTH
+    private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN"; // OAUTH
+    private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT"; // OAUTH
 
-    private static final String DEFAULT_OUTDOOR_MODULE = "DEFAULT_OUTDOOR_MODULE";
+    private static final String DEFAULT_OUTDOOR_MODULE = "DEFAULT_OUTDOOR_MODULE"; // If the user owns more than one outdoor module
 
     private final SharedPreferences sharedPreferences;
 
-    public SharedPreferencesTokenStore(Context context) {
+    public SharedPreferencesStore(Context context) {
         sharedPreferences = PreferenceManager.getDefaultSharedPreferences(context);
     }
 
