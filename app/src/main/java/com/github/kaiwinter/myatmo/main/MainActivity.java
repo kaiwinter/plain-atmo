@@ -20,7 +20,6 @@ import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
-import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.google.android.material.snackbar.Snackbar;
 
 import java.util.List;
@@ -103,10 +102,10 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        if (!NetworkUtil.isOnline(this)) {
-            Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
-            return;
-        }
+//        if (!NetworkUtil.isOnline(this)) {
+//            Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
+//            return;
+//        }
 
         showLoadingState();
 
@@ -180,8 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<StationsData> call, Throwable t) {
-                String message = getString(R.string.main_load_error, t.getMessage());
-                Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(binding.loadingIndicator, R.string.netatmo_connection_error, Snackbar.LENGTH_LONG).show();
                 hideLoadingState();
             }
         });

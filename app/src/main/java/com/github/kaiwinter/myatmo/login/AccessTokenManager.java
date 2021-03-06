@@ -1,7 +1,6 @@
 package com.github.kaiwinter.myatmo.login;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.core.util.Consumer;
 
@@ -11,8 +10,6 @@ import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
-
-import java.util.Date;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -58,7 +55,7 @@ public class AccessTokenManager {
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-                String errormessage = context.getString(R.string.main_load_error, t.getMessage());
+                String errormessage = context.getString(R.string.netatmo_connection_error);
                 onError.accept(errormessage);
             }
         });

@@ -21,7 +21,6 @@ import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
-import com.github.kaiwinter.myatmo.util.NetworkUtil;
 import com.github.mikephil.charting.components.MarkerView;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.data.Entry;
@@ -88,11 +87,6 @@ public class ChartActivity extends AppCompatActivity {
     private void getdata() {
         if (TextUtils.isEmpty(tokenstore.getAccessToken())) {
             finish(); // return to MainActivity for login
-            return;
-        }
-
-        if (!NetworkUtil.isOnline(this)) {
-            Snackbar.make(binding.getRoot(), R.string.no_connection, Snackbar.LENGTH_LONG).show();
             return;
         }
 
@@ -185,9 +179,7 @@ public class ChartActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Measure> call, Throwable t) {
                 runOnUiThread(() -> {
-                    String message = getString(R.string.main_load_error, t.getMessage());
-                    Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
-
+                    Snackbar.make(binding.loadingIndicator, R.string.netatmo_connection_error, Snackbar.LENGTH_LONG).show();
                     binding.loadingIndicator.setVisibility(View.INVISIBLE);
                 });
             }
