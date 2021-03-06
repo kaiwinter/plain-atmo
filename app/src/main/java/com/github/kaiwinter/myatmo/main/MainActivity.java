@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.github.kaiwinter.myatmo.R;
@@ -22,6 +23,8 @@ import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesTokenStore;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import retrofit2.Call;
@@ -140,23 +143,42 @@ public class MainActivity extends AppCompatActivity {
                         moduleVO.co2 = device.dashboardData.cO2;
                         moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
 
-                        showInfo(moduleVO);
+                        updateUiWithModuleData(moduleVO);
 
                         // OUTDOOR
                         List<Module> modules = device.modules;
-                        Module module = modules.get(0);
+                        Iterator<Module> iterator = modules.iterator();
+                        while (iterator.hasNext()) {
+                            Module module = iterator.next();
+                            // Remove irrelevant modules
+                            if (!"NAModule1".equals(module.type)) {
+                                iterator.remove();
+                            }
+                        }
 
-                        ModuleVO moduleVO2 = new ModuleVO();
-                        moduleVO2.moduleName = module.moduleName;
-                        moduleVO2.beginTime = module.dashboardData.timeUtc;
-                        moduleVO2.temperature = module.dashboardData.temperature;
-                        moduleVO2.humidity = module.dashboardData.humidity;
+                        if (modules.size() == 1) {
+                            showIndoorModuleData(modules.get(0));
 
-                        outdoorId = module.id;
-                        outdoorName = module.moduleName;
-                        moduleVO2.moduleType = ModuleVO.ModuleType.OUTDOOR;
+                        } else if (modules.size() > 1) {
+                            String defaultIndoorModule = tokenstore.getDefaultOutdoorModule();
+                            if (defaultIndoorModule != null) {
+                                boolean found = false;
+                                for (Module module : modules) {
+                                    if (module.id.equals(defaultIndoorModule)) {
+                                        showIndoorModuleData(module);
+                                        found = true;
+                                        break;
+                                    }
+                                }
+                                if (!found) {
+                                    askUserAboutDefaultIndoorModule(modules);
+                                }
 
-                        showInfo(moduleVO2);
+                            } else {
+                                askUserAboutDefaultIndoorModule(modules);
+                            }
+                        }
+
                     } else {
                         Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
                     }
@@ -175,6 +197,37 @@ public class MainActivity extends AppCompatActivity {
                     snackbar.show();
                 }
                 hideLoadingState();
+            }
+
+            private void askUserAboutDefaultIndoorModule(List<Module> modules) {
+                List<String> moduleNames = new ArrayList<>();
+                for (Module module : modules) {
+                    moduleNames.add(module.moduleName);
+                }
+
+                AlertDialog.Builder dialog = new AlertDialog.Builder(MainActivity.this)
+                        .setTitle(R.string.indoor_module_selection)
+                        .setItems(moduleNames.toArray(new String[0]), (dialog1, position) -> {
+                            Module module = modules.get(position);
+                            tokenstore.setDefaultOutdoorModule(module.id);
+
+                            showIndoorModuleData(module);
+                        });
+                dialog.create().show();
+            }
+
+            private void showIndoorModuleData(Module module) {
+                ModuleVO moduleVO = new ModuleVO();
+                moduleVO.moduleName = module.moduleName;
+                moduleVO.beginTime = module.dashboardData.timeUtc;
+                moduleVO.temperature = module.dashboardData.temperature;
+                moduleVO.humidity = module.dashboardData.humidity;
+
+                outdoorId = module.id;
+                outdoorName = module.moduleName;
+                moduleVO.moduleType = ModuleVO.ModuleType.OUTDOOR;
+
+                updateUiWithModuleData(moduleVO);
             }
 
             @Override
@@ -206,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    private void showInfo(final ModuleVO moduleVO) {
+    private void updateUiWithModuleData(final ModuleVO moduleVO) {
         runOnUiThread(() -> {
             if (moduleVO.moduleType == ModuleVO.ModuleType.INDOOR) {
                 binding.module1Name.setText(moduleVO.moduleName);

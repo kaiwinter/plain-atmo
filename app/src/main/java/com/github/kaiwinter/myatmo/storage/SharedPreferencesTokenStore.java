@@ -10,6 +10,9 @@ public class SharedPreferencesTokenStore {
     private static final String KEY_REFRESH_TOKEN = "KEY_REFRESH_TOKEN";
     private static final String KEY_ACCESS_TOKEN = "KEY_ACCESS_TOKEN";
     private static final String KEY_EXPIRES_AT = "KEY_EXPIRES_AT";
+
+    private static final String DEFAULT_OUTDOOR_MODULE = "DEFAULT_OUTDOOR_MODULE";
+
     private final SharedPreferences sharedPreferences;
 
     public SharedPreferencesTokenStore(Context context) {
@@ -34,5 +37,15 @@ public class SharedPreferencesTokenStore {
 
     public long getExpiresAt() {
         return sharedPreferences.getLong(KEY_EXPIRES_AT, 0);
+    }
+
+    public String getDefaultOutdoorModule() {
+        return sharedPreferences.getString(DEFAULT_OUTDOOR_MODULE, null);
+    }
+
+    public void setDefaultOutdoorModule(String indoorModuleId) {
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(DEFAULT_OUTDOOR_MODULE, indoorModuleId);
+        editor.apply();
     }
 }
