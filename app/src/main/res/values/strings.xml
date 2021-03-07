@@ -10,7 +10,6 @@
     <string name="temperature">Temperature</string>
     <string name="humidity">Humidity</string>
     <string name="co2" translatable="false">CO2</string>
-    <string name="no_connection">No internet connection</string>
     <string name="chart_no_data">No chart data available</string>
     <string name="chart_timespan">" (last 24 hours)"</string>
     <string name="no_station_data">No station data available.</string>

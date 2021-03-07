@@ -4,7 +4,6 @@
     <string name="temperature">Temperatur</string>
     <string name="humidity">Luftfeuchtigkeit</string>
     <string name="login_login_button">Einloggen</string>
-    <string name="no_connection">Keine Internetverbindung</string>
     <string name="chart_no_data">Keine Daten verfügbar</string>
     <string name="chart_timespan">" (letzte 24 Stunden)"</string>
     <string name="no_station_data">Keine Stationsdaten verfügbar.</string>
