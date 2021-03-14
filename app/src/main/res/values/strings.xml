@@ -17,4 +17,5 @@
     <string name="logout_login">Re-Login</string>
     <string name="netatmo_connection_error">Couldn\'t connect to Netatmo</string>
     <string name="indoor_module_selection">Please select one outdoor module</string>
+    <string name="not_loaded" translatable="false">-</string>
 </resources>

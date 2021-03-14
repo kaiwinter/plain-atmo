@@ -1,348 +1,350 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:id="@+id/main"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        tools:context="com.github.kaiwinter.myatmo.main.MainActivity">
+        xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+                name="viewmodel"
+                type="com.github.kaiwinter.myatmo.main.MainActivityViewModel" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+            tools:context="com.github.kaiwinter.myatmo.main.MainActivity">
 
-        <ScrollView
+        <RelativeLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="match_parent"
+                app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-            <LinearLayout
+            <ScrollView
                     android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical">
+
+                    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
+                            android:id="@+id/loadingIndicator"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:indeterminate="true"
+                            android:visibility="@{viewmodel.isLoading ? View.VISIBLE : View.INVISIBLE}"
+                            app:spb_color="@color/colorPrimary"
+                            app:spb_mirror_mode="false"
+                            app:spb_progressiveStart_activated="true"
+                            app:spb_progressiveStart_speed="1.5"
+                            app:spb_progressiveStop_speed="3.4"
+                            app:spb_reversed="false"
+                            app:spb_sections_count="4"
+                            app:spb_speed="2.0"
+                            app:spb_stroke_separator_length="4dp"
+                            app:spb_stroke_width="4dp" />
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="24dp"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@{viewmodel.indoorModule.moduleName}"
+                                android:textAllCaps="true"
+                                android:textSize="20sp" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="bottom"
+                                android:layout_marginStart="10dp"
+                                android:gravity="bottom"
+                                android:text="@{viewmodel.indoorModule.beginTimeAsString == null ? `` : @string/display_timestamp(viewmodel.indoorModule.beginTimeAsString)}" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/module1TemperatureCard"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="50"
+                                android:onClick="detailButtonClicked"
+                                app:cardBackgroundColor="#f9f9f9"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="4dp"
+                                app:cardUseCompatPadding="true"
+                                app:contentPadding="16dp">
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:text="@{viewmodel.indoorModule.temperature == null ? @string/not_loaded : @string/display_temperature(viewmodel.indoorModule.temperature)}"
+                                        android:textSize="25sp" />
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/calibri"
+                                        android:text="@string/temperature"
+                                        android:textColor="#3C3C3C"
+                                        android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/module1HumidityCard"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_weight="50"
+                                android:onClick="detailButtonClicked"
+                                app:cardBackgroundColor="#f9f9f9"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="4dp"
+                                app:cardUseCompatPadding="true"
+                                app:contentPadding="16dp">
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:text="@{viewmodel.indoorModule.humidity == null ? @string/not_loaded : @string/display_humidity(viewmodel.indoorModule.humidity)}"
+                                        android:textSize="25sp" />
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/calibri"
+                                        android:text="@string/humidity"
+                                        android:textColor="#3C3C3C"
+                                        android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/module1Co2Card"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="50"
+                                android:onClick="detailButtonClicked"
+                                app:cardBackgroundColor="#f9f9f9"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="4dp"
+                                app:cardUseCompatPadding="true"
+                                app:contentPadding="12dp">
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:text="@{viewmodel.indoorModule.co2 == null ? @string/not_loaded : @string/display_co2(viewmodel.indoorModule.co2)}"
+                                        android:textSize="25sp" />
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/calibri"
+                                        android:text="@string/co2"
+                                        android:textColor="#3C3C3C"
+                                        android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="24dp"
+                            android:layout_marginTop="32dp"
+                            android:layout_marginRight="24dp"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:text="@{viewmodel.outdoorModule.moduleName}"
+                                android:textAllCaps="true"
+                                android:textSize="20sp" />
+
+                        <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="match_parent"
+                                android:layout_gravity="bottom"
+                                android:layout_marginStart="10dp"
+                                android:gravity="bottom"
+                                android:text="@{viewmodel.outdoorModule.beginTimeAsString == null ? `` : @string/display_timestamp(viewmodel.outdoorModule.beginTimeAsString)}" />
+                    </LinearLayout>
+
+                    <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginLeft="16dp"
+                            android:layout_marginTop="16dp"
+                            android:layout_marginRight="16dp"
+                            android:orientation="horizontal"
+                            android:weightSum="100">
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/module2TemperatureCard"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginEnd="4dp"
+                                android:layout_weight="50"
+                                android:onClick="detailButtonClicked"
+                                app:cardBackgroundColor="#f9f9f9"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="4dp"
+                                app:cardUseCompatPadding="true"
+                                app:contentPadding="16dp">
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:text="@{viewmodel.outdoorModule.temperature == null ? @string/not_loaded : @string/display_temperature(viewmodel.outdoorModule.temperature)}"
+                                        android:textSize="25sp" />
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/calibri"
+                                        android:text="@string/temperature"
+                                        android:textColor="#3C3C3C"
+                                        android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                        <androidx.cardview.widget.CardView
+                                android:id="@+id/module2HumidityCard"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="4dp"
+                                android:layout_weight="50"
+                                android:onClick="detailButtonClicked"
+                                app:cardBackgroundColor="#f9f9f9"
+                                app:cardCornerRadius="8dp"
+                                app:cardElevation="4dp"
+                                app:cardUseCompatPadding="true"
+                                app:contentPadding="16dp">
+
+                            <LinearLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="wrap_content"
+                                    android:orientation="vertical">
+
+                                <TextView
+                                        android:layout_width="match_parent"
+                                        android:layout_height="match_parent"
+                                        android:layout_marginTop="8dp"
+                                        android:layout_marginBottom="8dp"
+                                        android:text="@{viewmodel.outdoorModule.humidity == null ? @string/not_loaded : @string/display_humidity(viewmodel.outdoorModule.humidity)}"
+                                        android:textSize="25sp" />
+
+
+                                <TextView
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:fontFamily="@font/calibri"
+                                        android:text="@string/humidity"
+                                        android:textColor="#3C3C3C"
+                                        android:textSize="16sp" />
+
+                            </LinearLayout>
+
+                        </androidx.cardview.widget.CardView>
+
+                    </LinearLayout>
+
+                </LinearLayout>
+
+
+            </ScrollView>
+
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                    android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical">
+                    android:layout_alignParentBottom="true"
+                    android:layout_centerHorizontal="true"
+                    android:layout_marginBottom="24dp"
+                    android:backgroundTint="@color/colorPrimary"
+                    android:enabled="@{!viewmodel.isLoading}"
+                    android:onClick="refreshButtonClicked"
+                    android:src="@drawable/ic_refresh_24px"
+                    app:borderWidth="0dp"
+                    app:fabSize="normal" />
 
-                <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-                        android:id="@+id/loadingIndicator"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:indeterminate="true"
-                        android:visibility="invisible"
-                        app:spb_color="@color/colorPrimary"
-                        app:spb_mirror_mode="false"
-                        app:spb_progressiveStart_activated="true"
-                        app:spb_progressiveStart_speed="1.5"
-                        app:spb_progressiveStop_speed="3.4"
-                        app:spb_reversed="false"
-                        app:spb_sections_count="4"
-                        app:spb_speed="2.0"
-                        app:spb_stroke_separator_length="4dp"
-                        app:spb_stroke_width="4dp" />
+        </RelativeLayout>
 
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="24dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                    <TextView
-                            android:id="@+id/module1Name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text=""
-                            android:textAllCaps="true"
-                            android:textSize="20sp" />
-
-                    <TextView
-                            android:id="@+id/module1Timestamp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginStart="10dp"
-                            android:gravity="bottom"
-                            android:text="" />
-                </LinearLayout>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/module1TemperatureCard"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
-                            android:layout_weight="50"
-                            app:cardBackgroundColor="#f9f9f9"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="4dp"
-                            app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp"
-                            android:onClick="detailButtonClicked">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/module1Temperature"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:text=""
-                                    android:textSize="25sp" />
-
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
-                                    android:text="@string/temperature"
-                                    android:textColor="#3C3C3C"
-                                    android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/module1HumidityCard"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:layout_weight="50"
-                            app:cardBackgroundColor="#f9f9f9"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="4dp"
-                            app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp"
-                            android:onClick="detailButtonClicked">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/module1Humidity"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:text=""
-                                    android:textSize="25sp" />
-
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
-                                    android:text="@string/humidity"
-                                    android:textColor="#3C3C3C"
-                                    android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/module1Co2Card"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
-                            android:layout_weight="50"
-                            app:cardBackgroundColor="#f9f9f9"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="4dp"
-                            app:cardUseCompatPadding="true"
-                            app:contentPadding="12dp"
-                            android:onClick="detailButtonClicked">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/module1Co2"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:text=""
-                                    android:textSize="25sp" />
-
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
-                                    android:text="@string/co2"
-                                    android:textColor="#3C3C3C"
-                                    android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="24dp"
-                        android:layout_marginTop="32dp"
-                        android:layout_marginRight="24dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                    <TextView
-                            android:id="@+id/module2Name"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:text=""
-                            android:textAllCaps="true"
-                            android:textSize="20sp" />
-
-                    <TextView
-                            android:id="@+id/module2Timestamp"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_gravity="bottom"
-                            android:layout_marginStart="10dp"
-                            android:gravity="bottom"
-                            android:text="" />
-                </LinearLayout>
-
-                <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
-                        android:orientation="horizontal"
-                        android:weightSum="100">
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/module2TemperatureCard"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
-                            android:layout_weight="50"
-                            app:cardBackgroundColor="#f9f9f9"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="4dp"
-                            app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp"
-                            android:onClick="detailButtonClicked">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/module2Temperature"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:text=""
-                                    android:textSize="25sp" />
-
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
-                                    android:text="@string/temperature"
-                                    android:textColor="#3C3C3C"
-                                    android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                    <androidx.cardview.widget.CardView
-                            android:id="@+id/module2HumidityCard"
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
-                            android:layout_weight="50"
-                            app:cardBackgroundColor="#f9f9f9"
-                            app:cardCornerRadius="8dp"
-                            app:cardElevation="4dp"
-                            app:cardUseCompatPadding="true"
-                            app:contentPadding="16dp"
-                            android:onClick="detailButtonClicked">
-
-                        <LinearLayout
-                                android:layout_width="match_parent"
-                                android:layout_height="wrap_content"
-                                android:orientation="vertical">
-
-                            <TextView
-                                    android:id="@+id/module2Humidity"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="match_parent"
-                                    android:layout_marginTop="8dp"
-                                    android:layout_marginBottom="8dp"
-                                    android:text=""
-                                    android:textSize="25sp" />
-
-
-                            <TextView
-                                    android:layout_width="wrap_content"
-                                    android:layout_height="wrap_content"
-                                    android:fontFamily="@font/calibri"
-                                    android:text="@string/humidity"
-                                    android:textColor="#3C3C3C"
-                                    android:textSize="16sp" />
-
-                        </LinearLayout>
-
-                    </androidx.cardview.widget.CardView>
-
-                </LinearLayout>
-
-            </LinearLayout>
-
-
-        </ScrollView>
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-                android:id="@+id/refreshButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
-                android:layout_centerHorizontal="true"
-                android:layout_marginBottom="24dp"
-                android:backgroundTint="@color/colorPrimary"
-                android:src="@drawable/ic_refresh_24px"
-                app:borderWidth="0dp"
-                app:fabSize="normal"
-                android:onClick="refreshButtonClicked"/>
-
-    </RelativeLayout>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>
