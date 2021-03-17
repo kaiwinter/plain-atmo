@@ -41,16 +41,15 @@ public class MainActivityViewModel extends AndroidViewModel {
     MutableLiveData<String> errorMessage = new MutableLiveData<>();
     MutableLiveData<Integer> errorMessageRes = new MutableLiveData<>();
 
-    private SharedPreferencesStore preferencesStore;
-    private AccessTokenManager accessTokenManager;
+    private final SharedPreferencesStore preferencesStore;
+    private final AccessTokenManager accessTokenManager;
+    private final StationsDataService stationDataService;
 
-    public MainActivityViewModel(@NonNull Application application) {
+    public MainActivityViewModel(@NonNull Application application, SharedPreferencesStore preferencesStore, AccessTokenManager accessTokenManager, StationsDataService stationDataService) {
         super(application);
-    }
-
-    public void start() {
-        preferencesStore = new SharedPreferencesStore(getApplication());
-        accessTokenManager = new AccessTokenManager(getApplication());
+        this.preferencesStore = preferencesStore;
+        this.accessTokenManager = accessTokenManager;
+        this.stationDataService = stationDataService;
     }
 
     private void showLoadingState() {
@@ -77,7 +76,6 @@ public class MainActivityViewModel extends AndroidViewModel {
             return;
         }
 
-        StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, preferencesStore.getAccessToken());
         Call<StationsData> stationsData = stationDataService.getStationsData(null);
         stationsData.enqueue(new Callback<StationsData>() {
             @Override

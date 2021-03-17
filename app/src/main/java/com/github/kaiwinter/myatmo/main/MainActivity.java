@@ -13,7 +13,6 @@ import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.ChartActivity;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.github.kaiwinter.myatmo.login.LoginActivity;
-import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.google.android.material.snackbar.Snackbar;
 
 public class MainActivity extends AppCompatActivity implements ViewModelStoreOwner {
@@ -25,7 +24,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        viewModel = new ViewModelProvider(this).get(MainActivityViewModel.class);
+        viewModel = new ViewModelProvider(this, new MainActivityViewModelFactory(getApplication())).get(MainActivityViewModel.class);
 
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
@@ -46,7 +45,6 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
             });
             snackbar.show();
         });
-        viewModel.start();
     }
 
     @Override
