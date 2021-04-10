@@ -127,62 +127,7 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
                 if (response.isSuccessful()) {
                     StationsData stationsData = response.body();
-                    if (stationsData != null && stationsData.body != null) {
-                        Body body = stationsData.body;
-                        List<Device> devices = body.devices;
-                        Device device = devices.get(0);
-
-                        ModuleVO moduleVO = new ModuleVO();
-                        moduleVO.moduleName = device.moduleName;
-                        moduleVO.beginTime = device.dashboardData.timeUtc;
-                        moduleVO.temperature = device.dashboardData.temperature;
-                        moduleVO.humidity = device.dashboardData.humidity;
-
-                        deviceId = device.id;
-                        indoorName = device.moduleName;
-                        moduleVO.co2 = device.dashboardData.cO2;
-                        moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
-
-                        updateUiWithModuleData(moduleVO);
-
-                        // OUTDOOR
-                        List<Module> modules = device.modules;
-                        Iterator<Module> iterator = modules.iterator();
-                        while (iterator.hasNext()) {
-                            Module module = iterator.next();
-                            // Remove irrelevant modules
-                            if (!"NAModule1".equals(module.type)) {
-                                iterator.remove();
-                            }
-                        }
-
-                        if (modules.size() == 1) {
-                            showIndoorModuleData(modules.get(0));
-
-                        } else if (modules.size() > 1) {
-                            String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
-                            if (defaultIndoorModule != null) {
-                                boolean found = false;
-                                for (Module module : modules) {
-                                    if (module.id.equals(defaultIndoorModule)) {
-                                        showIndoorModuleData(module);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found) {
-                                    askUserAboutDefaultIndoorModule(modules);
-                                }
-
-                            } else {
-                                askUserAboutDefaultIndoorModule(modules);
-                            }
-                        }
-
-                    } else {
-                        Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
-                    }
-
+                    handleSuccess(stationsData);
                 } else {
                     APIError apiError = ServiceGenerator.parseError(response);
                     String detailMessage = apiError.error.message + " (" + apiError.error.code + ")";
@@ -197,6 +142,74 @@ public class MainActivity extends AppCompatActivity {
                     snackbar.show();
                 }
                 hideLoadingState();
+            }
+
+            private void handleSuccess(StationsData stationsData) {
+                if (stationsData == null || stationsData.body == null) {
+                    Snackbar.make(binding.getRoot(), R.string.no_station_data, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                Body body = stationsData.body;
+                List<Device> devices = body.devices;
+
+                if (devices.isEmpty()) {
+                    Snackbar.make(binding.getRoot(), R.string.no_devices, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+                Device device = devices.get(0);
+
+                if (device.dashboardData == null) {
+                    Snackbar.make(binding.getRoot(), R.string.no_dashboard_data, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
+                ModuleVO moduleVO = new ModuleVO();
+                moduleVO.moduleName = device.moduleName;
+                moduleVO.beginTime = device.dashboardData.timeUtc;
+                moduleVO.temperature = device.dashboardData.temperature;
+                moduleVO.humidity = device.dashboardData.humidity;
+
+                deviceId = device.id;
+                indoorName = device.moduleName;
+                moduleVO.co2 = device.dashboardData.cO2;
+                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
+
+                updateUiWithModuleData(moduleVO);
+
+                // OUTDOOR
+                List<Module> modules = device.modules;
+                Iterator<Module> iterator = modules.iterator();
+                while (iterator.hasNext()) {
+                    Module module = iterator.next();
+                    // Remove irrelevant modules
+                    if (!"NAModule1".equals(module.type)) {
+                        iterator.remove();
+                    }
+                }
+
+                if (modules.size() == 1) {
+                    showIndoorModuleData(modules.get(0));
+
+                } else if (modules.size() > 1) {
+                    String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
+                    if (defaultIndoorModule != null) {
+                        boolean found = false;
+                        for (Module module : modules) {
+                            if (module.id.equals(defaultIndoorModule)) {
+                                showIndoorModuleData(module);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            askUserAboutDefaultIndoorModule(modules);
+                        }
+
+                    } else {
+                        askUserAboutDefaultIndoorModule(modules);
+                    }
+                }
             }
 
             private void askUserAboutDefaultIndoorModule(List<Module> modules) {
