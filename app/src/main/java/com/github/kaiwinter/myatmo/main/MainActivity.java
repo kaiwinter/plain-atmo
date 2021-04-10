@@ -230,6 +230,11 @@ public class MainActivity extends AppCompatActivity {
             }
 
             private void showIndoorModuleData(Module module) {
+                if (module.dashboardData == null) {
+                    Snackbar.make(binding.getRoot(), R.string.no_dashboard_data, Snackbar.LENGTH_LONG).show();
+                    return;
+                }
+
                 ModuleVO moduleVO = new ModuleVO();
                 moduleVO.moduleName = module.moduleName;
                 moduleVO.beginTime = module.dashboardData.timeUtc;
