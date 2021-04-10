@@ -4,6 +4,9 @@ import com.github.kaiwinter.myatmo.chart.rest.model.Body;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonParseException;
+
+import java.io.Reader;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -62,7 +65,17 @@ public class ServiceGenerator {
 
     public static APIError parseError(retrofit2.Response<?> response) {
         Gson gson = new Gson();
-        return gson.fromJson(response.errorBody().charStream(), APIError.class);
+        Reader reader = response.errorBody().charStream();
+
+        APIError apiError;
+        try {
+            apiError = gson.fromJson(reader, APIError.class);
+        } catch (JsonParseException e) {
+            apiError = new APIError();
+            apiError.error = new APIError.Error();
+            apiError.error.message = e.getMessage();
+        }
+        return apiError;
     }
 
 }

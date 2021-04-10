@@ -82,59 +82,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
                 if (response.isSuccessful()) {
                     StationsData stationsData = response.body();
-                    if (stationsData != null && stationsData.body != null) {
-                        Body body = stationsData.body;
-                        List<Device> devices = body.devices;
-                        Device device = devices.get(0);
-
-                        ModuleVO moduleVO = new ModuleVO();
-                        moduleVO.moduleName = device.moduleName;
-                        moduleVO.beginTime = device.dashboardData.timeUtc;
-                        moduleVO.temperature = device.dashboardData.temperature;
-                        moduleVO.humidity = device.dashboardData.humidity;
-
-                        deviceId.postValue(device.id);
-                        moduleVO.co2 = device.dashboardData.cO2;
-                        moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
-
-                        indoorModule.postValue(moduleVO);
-
-                        List<Module> modules = device.modules;
-                        Iterator<Module> iterator = modules.iterator();
-                        while (iterator.hasNext()) {
-                            Module module = iterator.next();
-                            // Remove irrelevant modules
-                            if (!"NAModule1".equals(module.type)) {
-                                iterator.remove();
-                            }
-                        }
-
-                        if (modules.size() == 1) {
-                            showOutdoorModuleData(modules.get(0));
-
-                        } else if (modules.size() > 1) {
-                            String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
-                            if (defaultIndoorModule != null) {
-                                boolean found = false;
-                                for (Module module : modules) {
-                                    if (module.id.equals(defaultIndoorModule)) {
-                                        showOutdoorModuleData(module);
-                                        found = true;
-                                        break;
-                                    }
-                                }
-                                if (!found) {
-                                    askUserAboutDefaultIndoorModule(modules);
-                                }
-
-                            } else {
-                                askUserAboutDefaultIndoorModule(modules);
-                            }
-                        }
-
-                    } else {
-                        errorMessageRes.postValue(R.string.no_station_data);
-                    }
+                    handleSuccess(stationsData);
 
                 } else {
                     APIError apiError = ServiceGenerator.parseError(response);
@@ -147,6 +95,69 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                 }
                 hideLoadingState();
+            }
+
+            private void handleSuccess(StationsData stationsData) {
+                if (stationsData == null || stationsData.body == null) {
+                    errorMessageRes.postValue(R.string.no_station_data);
+                    return;
+                }
+                Body body = stationsData.body;
+                List<Device> devices = body.devices;
+                if (devices.isEmpty()) {
+                    errorMessageRes.postValue(R.string.no_devices);
+                    return;
+                }
+                Device device = devices.get(0);
+                if (device.dashboardData == null) {
+                    errorMessageRes.postValue(R.string.no_dashboard_data);
+                    return;
+                }
+                ModuleVO moduleVO = new ModuleVO();
+                moduleVO.moduleName = device.moduleName;
+                moduleVO.beginTime = device.dashboardData.timeUtc;
+                moduleVO.temperature = device.dashboardData.temperature;
+                moduleVO.humidity = device.dashboardData.humidity;
+
+                deviceId.postValue(device.id);
+                moduleVO.co2 = device.dashboardData.cO2;
+                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
+
+                indoorModule.postValue(moduleVO);
+
+                List<Module> modules = device.modules;
+                Iterator<Module> iterator = modules.iterator();
+                while (iterator.hasNext()) {
+                    Module module = iterator.next();
+                    // Remove irrelevant modules
+                    if (!"NAModule1".equals(module.type)) {
+                        iterator.remove();
+                    }
+                }
+
+                if (modules.size() == 1) {
+                    showOutdoorModuleData(modules.get(0));
+
+                } else if (modules.size() > 1) {
+                    String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
+                    if (defaultIndoorModule != null) {
+                        boolean found = false;
+                        for (Module module : modules) {
+                            if (module.id.equals(defaultIndoorModule)) {
+                                showOutdoorModuleData(module);
+                                found = true;
+                                break;
+                            }
+                        }
+                        if (!found) {
+                            askUserAboutDefaultIndoorModule(modules);
+                        }
+
+                    } else {
+                        askUserAboutDefaultIndoorModule(modules);
+                    }
+                }
+
             }
 
             private void askUserAboutDefaultIndoorModule(List<Module> modules) {
@@ -167,6 +178,11 @@ public class MainActivityViewModel extends AndroidViewModel {
             }
 
             private void showOutdoorModuleData(Module module) {
+                if (module.dashboardData == null) {
+                    errorMessageRes.postValue(R.string.no_dashboard_data);
+                    return;
+                }
+
                 ModuleVO moduleVO = new ModuleVO();
                 moduleVO.moduleName = module.moduleName;
                 moduleVO.beginTime = module.dashboardData.timeUtc;
