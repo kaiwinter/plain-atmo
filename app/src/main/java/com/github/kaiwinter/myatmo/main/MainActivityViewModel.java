@@ -18,6 +18,7 @@ import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
 import com.github.kaiwinter.myatmo.rest.APIError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
+import com.github.kaiwinter.myatmo.util.SingleLiveEvent;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -35,8 +36,8 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<ModuleVO> indoorModule = new MutableLiveData<>();
     public MutableLiveData<ModuleVO> outdoorModule = new MutableLiveData<>();
 
-    MutableLiveData<Void> startActivity = new MutableLiveData<>();
-    MutableLiveData<String> relogin = new MutableLiveData<>();
+    SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
+    SingleLiveEvent<String> navigateToRelogin = new SingleLiveEvent<>();
 
     MutableLiveData<String> errorMessage = new MutableLiveData<>();
     MutableLiveData<Integer> errorMessageRes = new MutableLiveData<>();
@@ -62,7 +63,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public void getdata() {
         if (TextUtils.isEmpty(preferencesStore.getAccessToken())) {
-            startActivity.postValue(null);
+            navigateToLoginActivity.call();
             return;
         }
 
@@ -89,7 +90,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     String detailMessage = apiError.error.message + " (" + apiError.error.code + ")";
 
                     if (response.code() == 401 || response.code() == 403) {
-                        relogin.postValue(detailMessage);
+                        navigateToRelogin.postValue(detailMessage);
                     } else {
                         errorMessage.postValue(detailMessage);
                     }

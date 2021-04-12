@@ -33,11 +33,11 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.errorMessage.observe(this, message -> Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show());
         viewModel.errorMessageRes.observe(this, messageId -> Snackbar.make(binding.loadingIndicator, messageId, Snackbar.LENGTH_LONG).show());
 
-        viewModel.startActivity.observe(this, test -> {
+        viewModel.navigateToLoginActivity.observe(this, __ -> {
             startLoginActivity();
         });
 
-        viewModel.relogin.observe(this, message -> {
+        viewModel.navigateToRelogin.observe(this, message -> {
             Snackbar snackbar = Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG);
             snackbar.setAction(R.string.logout_login, v -> {
                 viewModel.clearTokens();
