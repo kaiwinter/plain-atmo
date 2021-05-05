@@ -5,6 +5,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule;
 import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.main.rest.StationsDataService;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
+import com.github.kaiwinter.myatmo.util.SingleLiveEvent;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -20,6 +21,7 @@ import okio.Buffer;
 import static org.awaitility.Awaitility.await;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class MainActivityViewModelTest {
@@ -29,18 +31,20 @@ public class MainActivityViewModelTest {
 
     private MockWebServer mockWebServer = new MockWebServer();
 
+    /**
+     * The access token is missing when data should be loaded. The app should navigate to the LoginActivity.
+     */
     @Test
     public void switchToMainActivity() {
-//        SharedPreferencesStore sharedPreferences = mock(SharedPreferencesStore.class);
-//        when(sharedPreferences.getAccessToken()).thenReturn("");
-//        AccessTokenManager tokenManager = mock(AccessTokenManager.class);
-//        MainActivityViewModel mainActivityViewModel = new MainActivityViewModel(null, sharedPreferences, tokenManager);
-//        mainActivityViewModel.getdata();
-//        String value = mainActivityViewModel.startActivity.getValue();
-//
-//        assertEquals("FIXME", value);
-    }
+        SharedPreferencesStore sharedPreferences =
+                when(mock(SharedPreferencesStore.class).getAccessToken()).thenReturn("").getMock();
+        MainActivityViewModel viewModel = new MainActivityViewModel(null, sharedPreferences, null, null);
 
+        viewModel.navigateToLoginActivity = mock(SingleLiveEvent.class);
+        viewModel.getdata();
+
+        verify(viewModel.navigateToLoginActivity).call();
+    }
 
     @Test
     public void refreshAccessToken() throws IOException {
@@ -53,7 +57,6 @@ public class MainActivityViewModelTest {
         when(sharedPreferences.getAccessToken()).thenReturn("ABC");
         AccessTokenManager tokenManager = mock(AccessTokenManager.class);
         StationsDataService service = ServiceGenerator.createService(StationsDataService.class);
-
 
         MainActivityViewModel viewModel = new MainActivityViewModel(null, sharedPreferences, tokenManager, service);
         viewModel.getdata();
