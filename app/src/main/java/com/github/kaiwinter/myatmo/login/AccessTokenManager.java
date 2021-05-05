@@ -28,7 +28,7 @@ public class AccessTokenManager {
         long expiresAt = preferencesStore.getExpiresAt();
         long currentTimestamp = System.currentTimeMillis();
 
-        return currentTimestamp + EXPIRE_TOLERANCE_SECONDS >= expiresAt;
+        return currentTimestamp + (EXPIRE_TOLERANCE_SECONDS * 1000) >= expiresAt;
     }
 
     public void refreshAccessToken(Context context, Runnable onSuccess, Consumer<String> onError) {
