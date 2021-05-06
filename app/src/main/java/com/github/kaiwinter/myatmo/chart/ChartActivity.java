@@ -113,7 +113,7 @@ public class ChartActivity extends AppCompatActivity {
             return;
         }
 
-        MeasureService service = ServiceGenerator.createService(MeasureService.class, preferencesStore.getAccessToken());
+        MeasureService service = ServiceGenerator.createService(MeasureService.class);
         Call<Measure> call = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
         call.enqueue(new Callback<Measure>() {
             @Override

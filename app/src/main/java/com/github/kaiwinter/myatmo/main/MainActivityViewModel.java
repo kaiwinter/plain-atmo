@@ -77,7 +77,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             return;
         }
 
-        Call<StationsData> stationsData = stationDataService.getStationsData(null);
+        Call<StationsData> stationsData = stationDataService.getStationsData("Bearer "+ preferencesStore.getAccessToken(), null);
         stationsData.enqueue(new Callback<StationsData>() {
             @Override
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
@@ -87,7 +87,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                 } else {
                     APIError apiError = ServiceGenerator.parseError(response);
-                    String detailMessage = apiError.error.message + " (" + apiError.error.code + ")";
+                    String detailMessage = response.code() + ": " + apiError.error.message + " (" + apiError.error.code + ")";
 
                     if (response.code() == 401 || response.code() == 403) {
                         navigateToRelogin.postValue(detailMessage);

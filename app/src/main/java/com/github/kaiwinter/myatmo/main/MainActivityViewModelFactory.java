@@ -23,7 +23,7 @@ public class MainActivityViewModelFactory implements ViewModelProvider.Factory {
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.equals(MainActivityViewModel.class)) {
             SharedPreferencesStore sharedPreferencesStore = new SharedPreferencesStore(application);
-            StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class, sharedPreferencesStore.getAccessToken());
+            StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class);
             return (T) new MainActivityViewModel(application, sharedPreferencesStore, new AccessTokenManager(application), stationDataService);
         }
         return null;
