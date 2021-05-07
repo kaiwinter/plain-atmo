@@ -74,8 +74,8 @@ public class ChartActivity extends AppCompatActivity {
         supportActionBar.setTitle(moduleName);
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-        preferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
+        preferencesStore = new SharedPreferencesStore(getApplicationContext());
+        accessTokenManager = new AccessTokenManager(getApplicationContext());
     }
 
     @Override
@@ -93,7 +93,10 @@ public class ChartActivity extends AppCompatActivity {
         runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
+            accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
+                Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
+                runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
+            });
             return;
         }
 
@@ -113,8 +116,8 @@ public class ChartActivity extends AppCompatActivity {
             return;
         }
 
-        MeasureService service = ServiceGenerator.createService(MeasureService.class, preferencesStore.getAccessToken());
-        Call<Measure> call = service.getMeasure(deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
+        MeasureService service = ServiceGenerator.createService(MeasureService.class);
+        Call<Measure> call = service.getMeasure("Bearer " + preferencesStore.getAccessToken(), deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
         call.enqueue(new Callback<Measure>() {
             @Override
             public void onResponse(Call<Measure> call, Response<Measure> response) {

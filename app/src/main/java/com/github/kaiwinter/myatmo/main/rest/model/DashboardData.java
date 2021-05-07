@@ -6,13 +6,13 @@ import com.google.gson.annotations.SerializedName;
 public class DashboardData {
 
     @SerializedName("time_utc")
-    public Integer timeUtc;
+    public Long timeUtc;
     @SerializedName("Temperature")
     public Double temperature;
     @SerializedName("CO2")
-    public Integer cO2;
+    public Double cO2;
     @SerializedName("Humidity")
-    public Integer humidity;
+    public Double humidity;
     @SerializedName("Noise")
     public Integer noise;
     @SerializedName("Pressure")

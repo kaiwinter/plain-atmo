@@ -9,7 +9,7 @@
     <string name="no_station_data">Keine Stationsdaten verfügbar</string>
     <string name="login_introduction">Damit die App Daten deiner Wetterstation abrufen kann, musst du dich zuerst mit deinem Netatmo-Account einloggen. Dies geschieht in einem Browserfenster auf der Webseite von Netatmo. Die App bekommt dadurch deine Zugangsdaten nicht zu Gesicht, sondern lediglich ein Berechtigungstoken von Netatmo.</string>
     <string name="logout_login">Neu einloggen</string>
-    <string name="netatmo_connection_error">Verbindung zu Netatmo fehlgeschlagen</string>
+    <string name="netatmo_connection_error">Verbindung zu Netatmo fehlgeschlagen: %1$s</string>
     <string name="indoor_module_selection">Bitte ein Außen-Modul wählen</string>
     <string name="no_devices">Keine Geräte verfügbar</string>
     <string name="no_dashboard_data">Keine Dashboard-Daten verfügbar</string>

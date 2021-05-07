@@ -5,18 +5,19 @@ import com.github.kaiwinter.myatmo.util.DateTimeUtil;
 /**
  * Value Object which represents one netamo module. {@link ModuleType} defines which type of module this is.
  */
-class ModuleVO {
-    String moduleName;
-    ModuleType moduleType;
-    long beginTime;
-    double temperature;
-    double humidity;
-    double co2;
+public class ModuleVO {
+    public String id;
+    public String moduleName;
+    public ModuleType moduleType;
+    public Long beginTime;
+    public Double temperature;
+    public Double humidity;
+    public Double co2;
 
     /**
      * @return the {@link #beginTime} in short String representation
      */
-    String getBeginTimeAsString() {
+    public String getBeginTimeAsString() {
         return DateTimeUtil.getDateAsShortTimeString(beginTime);
     }
 
