@@ -93,7 +93,10 @@ public class ChartActivity extends AppCompatActivity {
         runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show());
+            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> {
+                Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
+                runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
+            });
             return;
         }
 
