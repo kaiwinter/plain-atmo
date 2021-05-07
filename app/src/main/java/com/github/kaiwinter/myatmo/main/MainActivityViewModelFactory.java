@@ -1,7 +1,6 @@
 package com.github.kaiwinter.myatmo.main;
 
 import android.app.Application;
-import android.widget.Toast;
 
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
