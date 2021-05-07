@@ -11,22 +11,14 @@ import androidx.browser.customtabs.CustomTabsIntent;
 
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.databinding.ActivityLoginBinding;
-import com.github.kaiwinter.myatmo.login.rest.LoginService;
-import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
 import com.github.kaiwinter.myatmo.main.MainActivity;
-import com.github.kaiwinter.myatmo.rest.APIError;
-import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
-import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
-
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String redirectUri = "com.github.kaiwinter.myatmo://login";
+    public static final String REDIRERECT_URI = "com.github.kaiwinter.myatmo://login";
 
     private ActivityLoginBinding binding;
+    private AccessTokenManager accessTokenManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +26,8 @@ public class LoginActivity extends AppCompatActivity {
 
         binding = ActivityLoginBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+
+        accessTokenManager = new AccessTokenManager(getApplicationContext());
     }
 
     /**
@@ -41,7 +35,7 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void loginClicked(View view) {
         String clientId = getString(R.string.client_id);
-        String url = "https://api.netatmo.com/oauth2/authorize" + "?client_id=" + clientId + "&redirect_uri=" + redirectUri + "&scope=read_station";
+        String url = "https://api.netatmo.com/oauth2/authorize" + "?client_id=" + clientId + "&redirect_uri=" + REDIRERECT_URI + "&scope=read_station";
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
         customTabsIntent.launchUrl(this, Uri.parse(url));
@@ -64,35 +58,13 @@ public class LoginActivity extends AppCompatActivity {
             showLoadingState();
 
             String code = data.getQueryParameter("code");
-            LoginService service = ServiceGenerator.createService(LoginService.class);
-
-            String clientId = getString(R.string.client_id);
-            String clientSecret = getString(R.string.client_secret);
-
-            Call<AccessToken> call = service.getAccessToken(clientId, clientSecret, redirectUri, "authorization_code", code, "read_station");
-            call.enqueue(new Callback<AccessToken>() {
-                @Override
-                public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
-
-                    if (response.isSuccessful()) {
-                        SharedPreferencesStore preferencesStore = new SharedPreferencesStore(LoginActivity.this);
-                        AccessToken body = response.body();
-                        long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
-                        preferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
-                        // finish(); // return to MainActivity
-                        startMainActivity(); // calling finish() doesn't work if firefox was used for OAUTH flow.
-                    } else {
-                        APIError apiError = ServiceGenerator.parseError(response);
-                        // Print HTTP error code and message and code from API Response
-                        binding.error.setText(getString(R.string.login_login_error, apiError.error.message + " (" + response.code() + ", " + apiError.error.code + ")"));
-                    }
-                    hideLoadingState(null);
-                }
-
-                @Override
-                public void onFailure(Call<AccessToken> call, Throwable t) {
-                    hideLoadingState(t.getMessage());
-                }
+            accessTokenManager.retrieveAccessToken(getApplication(), code, () -> {
+                // finish(); // return to MainActivity
+                startMainActivity(); // calling finish() doesn't work if firefox was used for OAUTH flow.
+                hideLoadingState(null);
+            }, errormessage -> {
+                binding.error.setText(errormessage);
+                hideLoadingState(null);
             });
 
         } else if (data.getQueryParameterNames().contains("error")) {

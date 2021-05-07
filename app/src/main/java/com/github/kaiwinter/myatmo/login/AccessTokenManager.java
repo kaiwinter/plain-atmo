@@ -24,6 +24,11 @@ public class AccessTokenManager {
         preferencesStore = new SharedPreferencesStore(context);
     }
 
+    /**
+     * Checks if the stored access token is expired.
+     *
+     * @return true if the access token is expired else false
+     */
     public boolean accessTokenRefreshNeeded() {
         long expiresAt = preferencesStore.getExpiresAt();
         long currentTimestamp = System.currentTimeMillis();
@@ -31,6 +36,54 @@ public class AccessTokenManager {
         return currentTimestamp + (EXPIRE_TOLERANCE_SECONDS * 1000) >= expiresAt;
     }
 
+    /**
+     * Retrieves the access token by a previously acquired code.
+     *
+     * @param context
+     * @param code      the previously acquired code
+     * @param onSuccess Runnable which is called on success
+     * @param onError   Consumer which is called on an error, receives the error message
+     */
+    public void retrieveAccessToken(Context context, String code, Runnable onSuccess, Consumer<String> onError) {
+        LoginService service = ServiceGenerator.createService(LoginService.class);
+
+        String clientId = context.getString(R.string.client_id);
+        String clientSecret = context.getString(R.string.client_secret);
+
+        Call<AccessToken> call = service.getAccessToken(clientId, clientSecret, LoginActivity.REDIRERECT_URI, "authorization_code", code, "read_station");
+        call.enqueue(new Callback<AccessToken>() {
+            @Override
+            public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
+
+                if (response.isSuccessful()) {
+                    SharedPreferencesStore preferencesStore = new SharedPreferencesStore(context);
+                    AccessToken body = response.body();
+                    long expiresAt = System.currentTimeMillis() + body.expiresIn * 1000;
+                    preferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
+                    onSuccess.run();
+
+                } else {
+                    APIError apiError = ServiceGenerator.parseError(response);
+                    // Print HTTP error code and message and code from API Response
+                    onError.accept(context.getString(R.string.login_login_error, apiError.error.message + " (" + response.code() + ", " + apiError.error.code + ")"));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<AccessToken> call, Throwable t) {
+                String errormessage = context.getString(R.string.netatmo_connection_error, t.getMessage());
+                onError.accept(errormessage);
+            }
+        });
+    }
+
+    /**
+     * Refreshes the access token.
+     *
+     * @param context
+     * @param onSuccess Runnable which is called on success
+     * @param onError   Consumer which is called on an error, receives the error message
+     */
     public void refreshAccessToken(Context context, Runnable onSuccess, Consumer<String> onError) {
         LoginService loginService = ServiceGenerator.createService(LoginService.class);
 
@@ -55,7 +108,7 @@ public class AccessTokenManager {
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
-                String errormessage = context.getString(R.string.netatmo_connection_error);
+                String errormessage = context.getString(R.string.netatmo_connection_error, t.getMessage());
                 onError.accept(errormessage);
             }
         });
