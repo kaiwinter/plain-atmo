@@ -74,8 +74,8 @@ public class ChartActivity extends AppCompatActivity {
         supportActionBar.setTitle(moduleName);
         supportActionBar.setDisplayHomeAsUpEnabled(true);
 
-        preferencesStore = new SharedPreferencesStore(this);
-        accessTokenManager = new AccessTokenManager(this);
+        preferencesStore = new SharedPreferencesStore(getApplicationContext());
+        accessTokenManager = new AccessTokenManager(getApplicationContext());
     }
 
     @Override
@@ -93,7 +93,7 @@ public class ChartActivity extends AppCompatActivity {
         runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this, this::getdata, errormessage -> {
+            accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
                 Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
                 runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
             });

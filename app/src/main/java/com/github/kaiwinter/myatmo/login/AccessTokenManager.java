@@ -18,10 +18,12 @@ import retrofit2.Response;
 public class AccessTokenManager {
     private static final long EXPIRE_TOLERANCE_SECONDS = 60;
 
+    private final Context context;
     private final SharedPreferencesStore preferencesStore;
 
     public AccessTokenManager(Context context) {
-        preferencesStore = new SharedPreferencesStore(context);
+        this.context = context;
+        this.preferencesStore = new SharedPreferencesStore(context);
     }
 
     /**
@@ -39,12 +41,11 @@ public class AccessTokenManager {
     /**
      * Retrieves the access token by a previously acquired code.
      *
-     * @param context
      * @param code      the previously acquired code
      * @param onSuccess Runnable which is called on success
      * @param onError   Consumer which is called on an error, receives the error message
      */
-    public void retrieveAccessToken(Context context, String code, Runnable onSuccess, Consumer<String> onError) {
+    public void retrieveAccessToken(String code, Runnable onSuccess, Consumer<String> onError) {
         LoginService service = ServiceGenerator.createService(LoginService.class);
 
         String clientId = context.getString(R.string.client_id);
@@ -80,11 +81,10 @@ public class AccessTokenManager {
     /**
      * Refreshes the access token.
      *
-     * @param context
      * @param onSuccess Runnable which is called on success
      * @param onError   Consumer which is called on an error, receives the error message
      */
-    public void refreshAccessToken(Context context, Runnable onSuccess, Consumer<String> onError) {
+    public void refreshAccessToken(Runnable onSuccess, Consumer<String> onError) {
         LoginService loginService = ServiceGenerator.createService(LoginService.class);
 
         String clientId = context.getString(R.string.client_id);

@@ -58,7 +58,7 @@ public class LoginActivity extends AppCompatActivity {
             showLoadingState();
 
             String code = data.getQueryParameter("code");
-            accessTokenManager.retrieveAccessToken(getApplication(), code, () -> {
+            accessTokenManager.retrieveAccessToken(code, () -> {
                 // finish(); // return to MainActivity
                 startMainActivity(); // calling finish() doesn't work if firefox was used for OAUTH flow.
                 hideLoadingState(null);

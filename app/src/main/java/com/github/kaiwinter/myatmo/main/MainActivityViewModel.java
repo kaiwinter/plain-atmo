@@ -70,7 +70,7 @@ public class MainActivityViewModel extends AndroidViewModel {
         showLoadingState();
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(getApplication(), this::getdata, errormessage -> {
+            accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
                 errorMessage.postValue(errormessage);
                 hideLoadingState();
             });
