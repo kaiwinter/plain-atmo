@@ -140,6 +140,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     showOutdoorModuleData(modules.get(0));
 
                 } else if (modules.size() > 1) {
+                    // FIXME: move to activity, remove Application from constructor
                     String defaultIndoorModule = preferencesStore.getDefaultOutdoorModule();
                     if (defaultIndoorModule != null) {
                         boolean found = false;
