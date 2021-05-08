@@ -1,6 +1,7 @@
 package com.github.kaiwinter.myatmo.login;
 
 import android.content.Context;
+import android.text.TextUtils;
 
 import androidx.core.util.Consumer;
 
@@ -89,6 +90,10 @@ public class AccessTokenManager {
 
         String clientId = context.getString(R.string.client_id);
         String clientSecret = context.getString(R.string.client_secret);
+        if (TextUtils.isEmpty(clientId) || TextUtils.isEmpty(clientSecret)) {
+            onError.accept(context.getString(R.string.missing_client_configuration));
+            return;
+        }
         String refreshToken = preferencesStore.getRefreshToken();
         Call<AccessToken> call = loginService.refreshToken(clientId, clientSecret, "refresh_token", refreshToken);
         call.enqueue(new Callback<AccessToken>() {

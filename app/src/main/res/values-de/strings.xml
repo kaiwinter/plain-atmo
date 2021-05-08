@@ -13,4 +13,5 @@
     <string name="indoor_module_selection">Bitte ein Außen-Modul wählen</string>
     <string name="no_devices">Keine Geräte verfügbar</string>
     <string name="no_dashboard_data">Keine Dashboard-Daten verfügbar</string>
+    <string name="missing_client_configuration">Client ID und/oder Client Secret fehlt</string>
 </resources>

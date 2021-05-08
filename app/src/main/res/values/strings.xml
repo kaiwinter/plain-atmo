@@ -20,4 +20,5 @@
     <string name="not_loaded" translatable="false">-</string>
     <string name="no_devices">No devices available</string>
     <string name="no_dashboard_data">No dashboard data available</string>
+    <string name="missing_client_configuration">Client ID and/or client secret missing</string>
 </resources>
