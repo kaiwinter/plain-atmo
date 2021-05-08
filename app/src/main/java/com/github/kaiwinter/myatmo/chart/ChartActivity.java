@@ -182,7 +182,8 @@ public class ChartActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<Measure> call, Throwable t) {
                 runOnUiThread(() -> {
-                    Snackbar.make(binding.loadingIndicator, R.string.netatmo_connection_error, Snackbar.LENGTH_LONG).show();
+                    String message = getString(R.string.netatmo_connection_error, t.getMessage());
+                    Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show();
                     binding.loadingIndicator.setVisibility(View.INVISIBLE);
                 });
             }

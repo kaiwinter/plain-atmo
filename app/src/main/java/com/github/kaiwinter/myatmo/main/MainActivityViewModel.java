@@ -197,7 +197,8 @@ public class MainActivityViewModel extends AndroidViewModel {
 
             @Override
             public void onFailure(Call<StationsData> call, Throwable t) {
-                errorMessageRes.postValue(R.string.netatmo_connection_error);
+                String message = getApplication().getString(R.string.netatmo_connection_error, t.getMessage());
+                errorMessage.postValue(message);
                 hideLoadingState();
             }
         });
