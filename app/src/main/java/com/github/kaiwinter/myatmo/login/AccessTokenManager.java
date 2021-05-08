@@ -8,7 +8,7 @@ import androidx.core.util.Consumer;
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.login.rest.LoginService;
 import com.github.kaiwinter.myatmo.login.rest.model.AccessToken;
-import com.github.kaiwinter.myatmo.rest.APIError;
+import com.github.kaiwinter.myatmo.rest.RestError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 
@@ -65,9 +65,9 @@ public class AccessTokenManager {
                     onSuccess.run();
 
                 } else {
-                    APIError apiError = ServiceGenerator.parseError(response);
+                    RestError.OauthError error = ServiceGenerator.parseOauthError(response);
                     // Print HTTP error code and message and code from API Response
-                    onError.accept(context.getString(R.string.login_login_error, apiError.error.message + " (" + response.code() + ", " + apiError.error.code + ")"));
+                    onError.accept(context.getString(R.string.login_login_error, error.error + " (" + response.code() + ")"));
                 }
             }
 
@@ -105,8 +105,8 @@ public class AccessTokenManager {
                     preferencesStore.setTokens(body.refreshToken, body.accessToken, expiresAt);
                     onSuccess.run();
                 } else {
-                    APIError apiError = ServiceGenerator.parseError(response);
-                    String errormessage = apiError.error.message + " (" + response.code() + ", " + apiError.error.code + ")";
+                    RestError.OauthError error = ServiceGenerator.parseOauthError(response);
+                    String errormessage = context.getString(R.string.token_refresh_error, error.error) + " (" + response.code() + ")";
                     onError.accept(errormessage);
                 }
             }

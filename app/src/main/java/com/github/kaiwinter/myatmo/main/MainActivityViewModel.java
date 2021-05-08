@@ -15,7 +15,7 @@ import com.github.kaiwinter.myatmo.main.rest.model.Body;
 import com.github.kaiwinter.myatmo.main.rest.model.Device;
 import com.github.kaiwinter.myatmo.main.rest.model.Module;
 import com.github.kaiwinter.myatmo.main.rest.model.StationsData;
-import com.github.kaiwinter.myatmo.rest.APIError;
+import com.github.kaiwinter.myatmo.rest.RestError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.github.kaiwinter.myatmo.util.SingleLiveEvent;
@@ -86,7 +86,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     handleSuccess(stationsData);
 
                 } else {
-                    APIError apiError = ServiceGenerator.parseError(response);
+                    RestError.ApiError apiError = ServiceGenerator.parseError(response);
                     String detailMessage = response.code() + ": " + apiError.error.message + " (" + apiError.error.code + ")";
 
                     if (response.code() == 401 || response.code() == 403) {

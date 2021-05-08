@@ -39,19 +39,59 @@ public class ServiceGenerator {
         return retrofit.create(serviceClass);
     }
 
-    public static APIError parseError(retrofit2.Response<?> response) {
+    /**
+     * Parses the error body of Oauth2 related REST responses.
+     * <pre>
+     *  {
+     *     "error": "Request error type",
+     *     "error_description": "Request error desc"
+     *  }
+     * </pre>
+     *
+     * @param response REST response
+     * @return an parsed error object
+     */
+    public static RestError.OauthError parseOauthError(retrofit2.Response<?> response) {
         Gson gson = new Gson();
         Reader reader = response.errorBody().charStream();
 
-        APIError apiError;
+        RestError.OauthError error;
         try {
-            apiError = gson.fromJson(reader, APIError.class);
+            error = gson.fromJson(reader, RestError.OauthError.class);
         } catch (JsonParseException e) {
-            apiError = new APIError();
-            apiError.error = new APIError.Error();
-            apiError.error.message = e.getMessage();
+            error = new RestError.OauthError();
+            error.error = e.getMessage();
         }
-        return apiError;
+        return error;
+    }
+
+    /**
+     * Parses the error body of Netatmo related REST responses.
+     * <pre>
+     *  {
+     *     "error": {
+     *         "code": int,
+     *         "message": "string"     //optional
+     *     }
+     *  }
+     * </pre>
+     *
+     * @param response REST response
+     * @return an parsed error object
+     */
+    public static RestError.ApiError parseError(retrofit2.Response<?> response) {
+        Gson gson = new Gson();
+        Reader reader = response.errorBody().charStream();
+
+        RestError.ApiError error;
+        try {
+            error = gson.fromJson(reader, RestError.ApiError.class);
+        } catch (JsonParseException e) {
+            error = new RestError.ApiError();
+            error.error = new RestError.ApiError.Error();
+            error.error.message = e.getMessage();
+        }
+        return error;
     }
 
 }

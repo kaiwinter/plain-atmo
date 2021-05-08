@@ -17,7 +17,7 @@ import com.github.kaiwinter.myatmo.chart.rest.model.Measurement;
 import com.github.kaiwinter.myatmo.databinding.ActivityChartBinding;
 import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.main.Params;
-import com.github.kaiwinter.myatmo.rest.APIError;
+import com.github.kaiwinter.myatmo.rest.RestError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.github.kaiwinter.myatmo.util.DateTimeUtil;
@@ -122,7 +122,7 @@ public class ChartActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Measure> call, Response<Measure> response) {
                 if (!response.isSuccessful()) {
-                    APIError apiError = ServiceGenerator.parseError(response);
+                    RestError.ApiError apiError = ServiceGenerator.parseError(response);
                     String detailMessage = apiError.error.message + " (" + apiError.error.code + ")";
                     Snackbar snackbar = Snackbar.make(binding.getRoot(), detailMessage, Snackbar.LENGTH_LONG);
 
