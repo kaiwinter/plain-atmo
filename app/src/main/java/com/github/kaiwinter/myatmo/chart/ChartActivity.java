@@ -96,6 +96,7 @@ public class ChartActivity extends AppCompatActivity {
             accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
                 Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
                 runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
+                finish(); // return to MainActivity for login
             });
             return;
         }

@@ -71,13 +71,12 @@ public class MainActivityViewModel extends AndroidViewModel {
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
             accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
-                errorMessage.postValue(errormessage);
-                hideLoadingState();
+                navigateToRelogin.postValue(errormessage);
             });
             return;
         }
 
-        Call<StationsData> stationsData = stationDataService.getStationsData("Bearer "+ preferencesStore.getAccessToken(), null);
+        Call<StationsData> stationsData = stationDataService.getStationsData("Bearer " + preferencesStore.getAccessToken(), null);
         stationsData.enqueue(new Callback<StationsData>() {
             @Override
             public void onResponse(Call<StationsData> call, Response<StationsData> response) {
