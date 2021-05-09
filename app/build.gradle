@@ -7,7 +7,7 @@ android {
         minSdkVersion 21 // Retrofit
         targetSdkVersion 30
         versionCode 21
-        versionName "1.5.2-SNAPSHOT"
+        versionName "1.5.2"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
