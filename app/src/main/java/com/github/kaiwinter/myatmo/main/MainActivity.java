@@ -33,9 +33,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.errorMessage.observe(this, message -> Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show());
         viewModel.errorMessageRes.observe(this, messageId -> Snackbar.make(binding.loadingIndicator, messageId, Snackbar.LENGTH_LONG).show());
 
-        viewModel.navigateToLoginActivity.observe(this, __ -> {
-            startLoginActivity();
-        });
+        viewModel.navigateToLoginActivity.observe(this, __ -> startLoginActivity());
 
         viewModel.navigateToRelogin.observe(this, message -> {
             Snackbar snackbar = Snackbar.make(binding.getRoot(), message, Snackbar.LENGTH_LONG);
@@ -75,6 +73,10 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
     }
 
     private void showIndoorChart(String measurementType) {
+        if (viewModel.indoorModule.getValue() == null) {
+            return;
+        }
+
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
         intent.putExtra(ChartActivity.DEVICE_ID, viewModel.deviceId.getValue());
         intent.putExtra(ChartActivity.MODULE_NAME, viewModel.indoorModule.getValue().moduleName);
@@ -83,6 +85,10 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
     }
 
     private void showOutdoorChart(String measurementType) {
+        if (viewModel.outdoorModule.getValue() == null) {
+            return;
+        }
+
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
         intent.putExtra(ChartActivity.DEVICE_ID, viewModel.deviceId.getValue());
         intent.putExtra(ChartActivity.MODULE_ID, viewModel.outdoorModule.getValue().id);
