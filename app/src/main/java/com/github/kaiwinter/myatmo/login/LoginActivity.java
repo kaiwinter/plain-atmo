@@ -35,6 +35,10 @@ public class LoginActivity extends AppCompatActivity {
      */
     public void loginClicked(View view) {
         String clientId = getString(R.string.client_id);
+        if (TextUtils.isEmpty(clientId)) {
+            binding.error.setText(R.string.missing_client_configuration);
+            return;
+        }
         String url = "https://api.netatmo.com/oauth2/authorize" + "?client_id=" + clientId + "&redirect_uri=" + REDIRERECT_URI + "&scope=read_station";
 
         CustomTabsIntent customTabsIntent = new CustomTabsIntent.Builder().build();
