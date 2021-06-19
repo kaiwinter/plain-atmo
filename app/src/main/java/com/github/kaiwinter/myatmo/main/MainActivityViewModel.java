@@ -32,8 +32,6 @@ import retrofit2.Response;
 public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<Boolean> isLoading = new MutableLiveData<>();
 
-    MutableLiveData<String> deviceId = new MutableLiveData<>();
-
     public MutableLiveData<ModuleVO> indoorModule = new MutableLiveData<>();
     public MutableLiveData<ModuleVO> outdoorModule = new MutableLiveData<>();
 
@@ -167,7 +165,7 @@ public class MainActivityViewModel extends AndroidViewModel {
             private void showIndoorModuleData(Device device) {
                 ModuleVO moduleVO = new ModuleVO();
                 moduleVO.moduleName = device.moduleName;
-                deviceId.postValue(device.id); // Refactor to moduleVo.id?
+                moduleVO.id = device.id;
                 moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
 
                 if (!device.reachable) {

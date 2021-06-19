@@ -77,19 +77,19 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         }
 
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
-        intent.putExtra(ChartActivity.DEVICE_ID, viewModel.deviceId.getValue());
+        intent.putExtra(ChartActivity.DEVICE_ID, viewModel.indoorModule.getValue().id);
         intent.putExtra(ChartActivity.MODULE_NAME, viewModel.indoorModule.getValue().moduleName);
         intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
         startActivity(intent);
     }
 
     private void showOutdoorChart(String measurementType) {
-        if (viewModel.outdoorModule.getValue() == null) {
+        if (viewModel.indoorModule.getValue() == null || viewModel.outdoorModule.getValue() == null) {
             return;
         }
 
         Intent intent = new Intent(getApplicationContext(), ChartActivity.class);
-        intent.putExtra(ChartActivity.DEVICE_ID, viewModel.deviceId.getValue());
+        intent.putExtra(ChartActivity.DEVICE_ID, viewModel.indoorModule.getValue().id);
         intent.putExtra(ChartActivity.MODULE_ID, viewModel.outdoorModule.getValue().id);
         intent.putExtra(ChartActivity.MODULE_NAME, viewModel.outdoorModule.getValue().moduleName);
         intent.putExtra(ChartActivity.MEASUREMENT_TYPE, measurementType);
