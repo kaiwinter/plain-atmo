@@ -1,0 +1,62 @@
+{
+    "body": {
+        "devices": [{
+                "_id": "A_ID",
+                "station_name": "Wetterstation (INDOOR)",
+                "date_setup": 1496157266,
+                "last_setup": 1496157266,
+                "type": "NAMain",
+                "last_status_store": 1615837315,
+                "module_name": "Wohnzimmer",
+                "firmware": 178,
+                "last_upgrade": 1496157266,
+                "wifi_status": 60,
+                "reachable": true,
+                "co2_calibrating": false,
+                "data_type": ["Temperature", "CO2", "Humidity", "Noise", "Pressure"],
+                "place": {
+                    "altitude": 38,
+                    "city": "Town",
+                    "country": "DE",
+                    "timezone": "Europe\/Berlin",
+                    "location": [1, 2]
+                },
+                "home_id": "A_HOME",
+                "home_name": "Wetterstation",
+                "dashboard_data": {
+                    "time_utc": 1615837309,
+                    "Temperature": 21.5,
+                    "CO2": 1087,
+                    "Humidity": 49,
+                    "Noise": 35,
+                    "Pressure": 1012.8,
+                    "AbsolutePressure": 1008.3,
+                    "min_temp": 20.3,
+                    "max_temp": 21.9,
+                    "date_max_temp": 1615791622,
+                    "date_min_temp": 1615793739,
+                    "temp_trend": "stable",
+                    "pressure_trend": "up"
+                },
+                "modules": [{
+                        "_id": "B_ID",
+                        "type": "NAModule1",
+                        "module_name": "Schlafzimmer",
+                        "last_setup": 1496157434,
+                        "data_type": ["Temperature", "Humidity"],
+                        "battery_percent": 80,
+                        "reachable": false,
+                        "firmware": 0,
+                        "last_message": 1615837313,
+                        "last_seen": 1615837300,
+                        "rf_status": 62,
+                        "battery_vp": 5638
+                    }
+                ]
+            }
+        ]
+    },
+    "status": "ok",
+    "time_exec": 0.075286865234375,
+    "time_server": 1615837630
+}

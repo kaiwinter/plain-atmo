@@ -20,6 +20,7 @@
     <string name="not_loaded" translatable="false">-</string>
     <string name="no_devices">No devices available</string>
     <string name="no_dashboard_data">No dashboard data available</string>
+    <string name="module_not_reachable">Module \'%1$s\' not reachable</string>
     <string name="missing_client_configuration">Client ID and/or client secret missing</string>
     <string name="token_refresh_error">Could not refresh token: %1$s</string>
 </resources>

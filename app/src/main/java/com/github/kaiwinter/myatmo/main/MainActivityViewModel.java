@@ -19,6 +19,7 @@ import com.github.kaiwinter.myatmo.rest.RestError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.github.kaiwinter.myatmo.util.SingleLiveEvent;
+import com.github.kaiwinter.myatmo.util.UserMessage;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -39,8 +40,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     SingleLiveEvent<String> navigateToRelogin = new SingleLiveEvent<>();
 
-    MutableLiveData<String> errorMessage = new MutableLiveData<>();
-    MutableLiveData<Integer> errorMessageRes = new MutableLiveData<>();
+    MutableLiveData<UserMessage> userMessage = new MutableLiveData<>();
 
     private final SharedPreferencesStore preferencesStore;
     private final AccessTokenManager accessTokenManager;
@@ -91,7 +91,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     if (response.code() == 401 || response.code() == 403) {
                         navigateToRelogin.postValue(detailMessage);
                     } else {
-                        errorMessage.postValue(detailMessage);
+                        userMessage.postValue(UserMessage.create(detailMessage));
                     }
                 }
                 hideLoadingState();
@@ -99,31 +99,17 @@ public class MainActivityViewModel extends AndroidViewModel {
 
             private void handleSuccess(StationsData stationsData) {
                 if (stationsData == null || stationsData.body == null) {
-                    errorMessageRes.postValue(R.string.no_station_data);
+                    userMessage.postValue(UserMessage.create(R.string.no_station_data));
                     return;
                 }
                 Body body = stationsData.body;
                 List<Device> devices = body.devices;
                 if (devices.isEmpty()) {
-                    errorMessageRes.postValue(R.string.no_devices);
+                    userMessage.postValue(UserMessage.create(R.string.no_devices));
                     return;
                 }
                 Device device = devices.get(0);
-                if (device.dashboardData == null) {
-                    errorMessageRes.postValue(R.string.no_dashboard_data);
-                    return;
-                }
-                ModuleVO moduleVO = new ModuleVO();
-                moduleVO.moduleName = device.moduleName;
-                moduleVO.beginTime = device.dashboardData.timeUtc;
-                moduleVO.temperature = device.dashboardData.temperature;
-                moduleVO.humidity = device.dashboardData.humidity;
-
-                deviceId.postValue(device.id);
-                moduleVO.co2 = device.dashboardData.cO2;
-                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
-
-                indoorModule.postValue(moduleVO);
+                showIndoorModuleData(device);
 
                 List<Module> modules = device.modules;
                 Iterator<Module> iterator = modules.iterator();
@@ -178,26 +164,48 @@ public class MainActivityViewModel extends AndroidViewModel {
                 dialog.create().show();
             }
 
-            private void showOutdoorModuleData(Module module) {
-                if (module.dashboardData == null) {
-                    errorMessageRes.postValue(R.string.no_dashboard_data);
+            private void showIndoorModuleData(Device device) {
+                ModuleVO moduleVO = new ModuleVO();
+                moduleVO.moduleName = device.moduleName;
+                deviceId.postValue(device.id); // Refactor to moduleVo.id?
+                moduleVO.moduleType = ModuleVO.ModuleType.INDOOR;
+
+                if (!device.reachable) {
+                    userMessage.postValue(UserMessage.create(R.string.module_not_reachable, device.moduleName));
+                } else if (device.dashboardData == null) {
+                    userMessage.postValue(UserMessage.create(R.string.no_dashboard_data));
                     return;
+                } else {
+                    moduleVO.beginTime = device.dashboardData.timeUtc;
+                    moduleVO.temperature = device.dashboardData.temperature;
+                    moduleVO.humidity = device.dashboardData.humidity;
+                    moduleVO.co2 = device.dashboardData.cO2;
                 }
 
+                indoorModule.postValue(moduleVO);
+            }
+
+            private void showOutdoorModuleData(Module module) {
                 ModuleVO moduleVO = new ModuleVO();
                 moduleVO.moduleName = module.moduleName;
-                moduleVO.beginTime = module.dashboardData.timeUtc;
-                moduleVO.temperature = module.dashboardData.temperature;
-                moduleVO.humidity = module.dashboardData.humidity;
                 moduleVO.id = module.id;
                 moduleVO.moduleType = ModuleVO.ModuleType.OUTDOOR;
+
+                if (!module.reachable) {
+                    userMessage.postValue(UserMessage.create(R.string.module_not_reachable, module.moduleName));
+                } else if (module.dashboardData == null) {
+                    userMessage.postValue(UserMessage.create(R.string.no_dashboard_data));
+                } else {
+                    moduleVO.beginTime = module.dashboardData.timeUtc;
+                    moduleVO.temperature = module.dashboardData.temperature;
+                    moduleVO.humidity = module.dashboardData.humidity;
+                }
                 outdoorModule.postValue(moduleVO);
             }
 
             @Override
             public void onFailure(Call<StationsData> call, Throwable t) {
-                String message = getApplication().getString(R.string.netatmo_connection_error, t.getMessage());
-                errorMessage.postValue(message);
+                userMessage.postValue(UserMessage.create(R.string.netatmo_connection_error, t.getMessage()));
                 hideLoadingState();
             }
         });

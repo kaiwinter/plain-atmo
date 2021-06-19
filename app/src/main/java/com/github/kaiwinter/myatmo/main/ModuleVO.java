@@ -18,6 +18,9 @@ public class ModuleVO {
      * @return the {@link #beginTime} in short String representation
      */
     public String getBeginTimeAsString() {
+        if (beginTime == null) {
+            return null;
+        }
         return DateTimeUtil.getDateAsShortTimeString(beginTime);
     }
 

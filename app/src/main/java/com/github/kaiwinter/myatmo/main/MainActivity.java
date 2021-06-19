@@ -30,8 +30,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         binding.setLifecycleOwner(this);
         binding.setViewmodel(viewModel);
 
-        viewModel.errorMessage.observe(this, message -> Snackbar.make(binding.loadingIndicator, message, Snackbar.LENGTH_LONG).show());
-        viewModel.errorMessageRes.observe(this, messageId -> Snackbar.make(binding.loadingIndicator, messageId, Snackbar.LENGTH_LONG).show());
+        viewModel.userMessage.observe(this, message -> Snackbar.make(binding.loadingIndicator, message.getMessage(this), Snackbar.LENGTH_LONG).show());
 
         viewModel.navigateToLoginActivity.observe(this, __ -> startLoginActivity());
 
