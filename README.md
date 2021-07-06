@@ -4,6 +4,7 @@ Alternative Netatmo client. It shows the data from one indoor and one outdoor st
 <a href="https://poeditor.com/join/project?hash=qDgG2Wc57Z" alt="Help translate"><img src="https://img.shields.io/badge/help%20translate-POEditor-orange"></a>
 
 <a href='https://play.google.com/store/apps/details?id=com.github.kaiwinter.myatmo'><img alt='Get it on Google Play' src='https://play.google.com/intl/en_us/badges/images/generic/en_badge_web_generic.png' height="70px"/></a>
+<a href="https://www.buymeacoffee.com/kaiwinter" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 50px !important; padding:10px"></a>
 
 ## Setup
 Provide a `credentials.xml` under `/res/values/` (see [`/res/values/credentials_sample.xml`](https://github.com/kaiwinter/plain-atmo/blob/master/app/src/main/res/values/credentials_sample.xml)) with your `client_id` and `client_secret`.
