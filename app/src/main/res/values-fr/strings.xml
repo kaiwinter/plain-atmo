@@ -1,10 +1,18 @@
-<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="login_login">"Login Netatmo"</string>
-    <string name="login_login_button">"Se connecter"</string>
-    <string name="login_login_error">"Erreur de connexion: %1$s"</string>
-    <string name="temperature">"Température"</string>
-    <string name="humidity">"Humidité"</string>
-    <string name="chart_no_data">"Aucune donnée disponible"</string>
+    <string name="login_login">Login Netatmo</string>
+    <string name="login_login_button">Se connecter</string>
+    <string name="login_login_error">Erreur de connexion: %1$s</string>
+    <string name="temperature">Température</string>
+    <string name="humidity">Humidité</string>
+    <string name="chart_no_data">Aucune donnée disponible</string>
     <string name="chart_timespan">" (dernières 24 heures)"</string>
+    <string name="no_station_data">Aucune donnée de station disponible</string>
+    <string name="login_introduction">Pour permettre à l\'application de charger les données de votre station météorologique, vous devez d\'abord vous connecter avec votre compte Netatmo. Cette opération s\'effectue dans une fenêtre de navigateur sur le site Web de Netatmo. De cette façon, l\'application ne voit pas vos données de connexion, elle reçoit simplement un accès de Netatmo.</string>
+    <string name="logout_login">Se reconnecter</string>
+    <string name="netatmo_connection_error">Impossible de se connecter à Netatmo: %1$s</string>
+    <string name="indoor_module_selection">Veuillez sélectionner un module extérieur</string>
+    <string name="no_devices">Aucun appareil disponible</string>
+    <string name="no_dashboard_data">Aucune donnée du tableau de bord</string>
+    <string name="module_not_reachable">Module \'%1$s\' non accessible</string>
+    <string name="token_refresh_error">Impossible d\'actualiser le jeton d\'accès: %1$s</string>
 </resources>
