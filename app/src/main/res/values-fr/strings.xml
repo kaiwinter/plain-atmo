@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="login_login">"Login Netatmo"</string>
+    <string name="login_login_button">"Se connecter"</string>
+    <string name="login_login_error">"Erreur de connexion: %1$s"</string>
+    <string name="temperature">"Température"</string>
+    <string name="humidity">"Humidité"</string>
+    <string name="chart_no_data">"Aucune donnée disponible"</string>
+    <string name="chart_timespan">" (dernières 24 heures)"</string>
+</resources>
