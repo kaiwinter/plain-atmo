@@ -6,8 +6,8 @@ android {
         applicationId "com.github.kaiwinter.myatmo"
         minSdkVersion 21 // Retrofit
         targetSdkVersion 30
-        versionCode 24
-        versionName "1.5.5"
+        versionCode 25
+        versionName "1.5.6-SNAPSHOT"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
     }
     buildTypes {
