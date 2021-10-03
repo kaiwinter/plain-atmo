@@ -2,6 +2,7 @@ package com.github.kaiwinter.myatmo.main;
 
 import android.app.Application;
 
+import androidx.annotation.NonNull;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
@@ -18,6 +19,7 @@ public class MainActivityViewModelFactory implements ViewModelProvider.Factory {
     }
 
 
+    @NonNull
     @Override
     public <T extends ViewModel> T create(Class<T> modelClass) {
         if (modelClass.equals(MainActivityViewModel.class)) {
@@ -25,6 +27,6 @@ public class MainActivityViewModelFactory implements ViewModelProvider.Factory {
             StationsDataService stationDataService = ServiceGenerator.createService(StationsDataService.class);
             return (T) new MainActivityViewModel(application, sharedPreferencesStore, new AccessTokenManager(application), stationDataService);
         }
-        return null;
+        throw new RuntimeException("Cannot create an instance of " + modelClass);
     }
 }
