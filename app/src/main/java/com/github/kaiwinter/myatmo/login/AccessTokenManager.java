@@ -53,7 +53,7 @@ public class AccessTokenManager {
         String clientSecret = context.getString(R.string.client_secret);
 
         Call<AccessToken> call = service.getAccessToken(clientId, clientSecret, LoginActivity.REDIRERECT_URI, "authorization_code", code, "read_station");
-        call.enqueue(new Callback<AccessToken>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
 
@@ -96,7 +96,7 @@ public class AccessTokenManager {
         }
         String refreshToken = preferencesStore.getRefreshToken();
         Call<AccessToken> call = loginService.refreshToken(clientId, clientSecret, "refresh_token", refreshToken);
-        call.enqueue(new Callback<AccessToken>() {
+        call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<AccessToken> call, Response<AccessToken> response) {
                 if (response.isSuccessful()) {
