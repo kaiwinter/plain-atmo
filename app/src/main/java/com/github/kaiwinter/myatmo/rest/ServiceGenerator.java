@@ -1,5 +1,6 @@
 package com.github.kaiwinter.myatmo.rest;
 
+import com.github.kaiwinter.myatmo.BuildConfig;
 import com.github.kaiwinter.myatmo.chart.rest.model.Body;
 import com.google.gson.FieldNamingPolicy;
 import com.google.gson.Gson;
@@ -18,11 +19,15 @@ public class ServiceGenerator {
     public static final String API_BASE_URL = "https://api.netatmo.com";
 
     public static <S> S createService(Class<S> serviceClass) {
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
-                .build();
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+
+        if (BuildConfig.DEBUG) {
+            HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+            interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+            clientBuilder.addInterceptor(interceptor);
+        }
+
+        OkHttpClient client = clientBuilder.build();
 
         BodyTypeAdapter myAdapter = new BodyTypeAdapter();
         Gson gson = new GsonBuilder()
