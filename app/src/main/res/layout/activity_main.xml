@@ -339,7 +339,7 @@
                     android:layout_marginBottom="24dp"
                     android:backgroundTint="@color/colorPrimary"
                     android:enabled="@{!viewmodel.isLoading}"
-                    android:onClick="refreshButtonClicked"
+                    android:onClick="@{() -> viewmodel.getdata()}"
                     android:src="@drawable/ic_refresh_24px"
                     app:borderWidth="0dp"
                     app:fabSize="normal" />

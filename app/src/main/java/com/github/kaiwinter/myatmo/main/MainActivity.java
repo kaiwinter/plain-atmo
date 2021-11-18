@@ -50,13 +50,6 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.getdata();
     }
 
-    /**
-     * Called from the refresh button defined in the XML.
-     */
-    public void refreshButtonClicked(View view) {
-        viewModel.getdata();
-    }
-
     public void detailButtonClicked(View view) {
         if (view == binding.module1TemperatureCard) {
             showIndoorChart(Params.TYPE_TEMPERATURE);
