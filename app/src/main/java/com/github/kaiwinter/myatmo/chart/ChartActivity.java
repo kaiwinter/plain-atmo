@@ -16,7 +16,7 @@ import com.github.kaiwinter.myatmo.chart.rest.model.Measure;
 import com.github.kaiwinter.myatmo.chart.rest.model.Measurement;
 import com.github.kaiwinter.myatmo.databinding.ActivityChartBinding;
 import com.github.kaiwinter.myatmo.login.AccessTokenManager;
-import com.github.kaiwinter.myatmo.main.Params;
+import com.github.kaiwinter.myatmo.main.MeasurementType;
 import com.github.kaiwinter.myatmo.rest.RestError;
 import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
@@ -48,7 +48,7 @@ public class ChartActivity extends AppCompatActivity {
     private ActivityChartBinding binding;
     private String moduleId;
     private String deviceId;
-    private String measurementType;
+    private MeasurementType measurementType;
 
     private SharedPreferencesStore preferencesStore;
     private AccessTokenManager accessTokenManager;
@@ -68,7 +68,7 @@ public class ChartActivity extends AppCompatActivity {
         moduleId = extras.getString(MODULE_ID);
         deviceId = extras.getString(DEVICE_ID);
         String moduleName = extras.getString(MODULE_NAME);
-        measurementType = extras.getString(MEASUREMENT_TYPE);
+        measurementType = (MeasurementType) extras.get(MEASUREMENT_TYPE);
 
         ActionBar supportActionBar = getSupportActionBar();
         supportActionBar.setTitle(moduleName);
@@ -106,11 +106,11 @@ public class ChartActivity extends AppCompatActivity {
         Date startDate = calendar.getTime();
 
         ValueSupplier valueSupplier;
-        if (Params.TYPE_TEMPERATURE.equals(measurementType)) {
+        if (measurementType == MeasurementType.TYPE_TEMPERATURE) {
             valueSupplier = new ValueSupplier.TemperatureValueSupplier();
-        } else if (Params.TYPE_HUMIDITY.equals(measurementType)) {
+        } else if (measurementType == MeasurementType.TYPE_HUMIDITY) {
             valueSupplier = new ValueSupplier.HumidityValueSupplier();
-        } else if (Params.TYPE_CO2.equals(measurementType)) {
+        } else if (measurementType == MeasurementType.TYPE_CO2) {
             valueSupplier = new ValueSupplier.CO2ValueSupplier();
         } else {
             finish();
@@ -118,7 +118,7 @@ public class ChartActivity extends AppCompatActivity {
         }
 
         MeasureService service = ServiceGenerator.createService(MeasureService.class);
-        Call<Measure> call = service.getMeasure("Bearer " + preferencesStore.getAccessToken(), deviceId, moduleId, "max", measurementType, (int) (startDate.getTime() / 1000), false);
+        Call<Measure> call = service.getMeasure("Bearer " + preferencesStore.getAccessToken(), deviceId, moduleId, MeasurementType.SCALE_MAX.getApiString(), measurementType.getApiString(), (int) (startDate.getTime() / 1000), false);
         call.enqueue(new Callback<>() {
             @Override
             public void onResponse(Call<Measure> call, Response<Measure> response) {

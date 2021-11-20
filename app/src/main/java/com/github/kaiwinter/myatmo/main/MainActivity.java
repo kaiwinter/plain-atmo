@@ -2,7 +2,6 @@ package com.github.kaiwinter.myatmo.main;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
@@ -42,6 +41,14 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
             });
             snackbar.show();
         });
+
+        viewModel.navigateToChartActivity.observe(this, switchToChartActivityVO -> {
+            if (switchToChartActivityVO.getStationType() == StationType.INDOOR_STATION) {
+                showIndoorChart(switchToChartActivityVO.getMeasurementType());
+            } else if (switchToChartActivityVO.getStationType() == StationType.OUTDOOR_STATION) {
+                showOutdoorChart(switchToChartActivityVO.getMeasurementType());
+            }
+        });
     }
 
     @Override
@@ -50,21 +57,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.getdata();
     }
 
-    public void detailButtonClicked(View view) {
-        if (view == binding.module1TemperatureCard) {
-            showIndoorChart(Params.TYPE_TEMPERATURE);
-        } else if (view == binding.module1HumidityCard) {
-            showIndoorChart(Params.TYPE_HUMIDITY);
-        } else if (view == binding.module1Co2Card) {
-            showIndoorChart(Params.TYPE_CO2);
-        } else if (view == binding.module2TemperatureCard) {
-            showOutdoorChart(Params.TYPE_TEMPERATURE);
-        } else if (view == binding.module2HumidityCard) {
-            showOutdoorChart(Params.TYPE_HUMIDITY);
-        }
-    }
-
-    private void showIndoorChart(String measurementType) {
+    private void showIndoorChart(MeasurementType measurementType) {
         if (viewModel.indoorModule.getValue() == null) {
             return;
         }
@@ -76,7 +69,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         startActivity(intent);
     }
 
-    private void showOutdoorChart(String measurementType) {
+    private void showOutdoorChart(MeasurementType measurementType) {
         if (viewModel.indoorModule.getValue() == null || viewModel.outdoorModule.getValue() == null) {
             return;
         }

@@ -37,6 +37,7 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     SingleLiveEvent<String> navigateToRelogin = new SingleLiveEvent<>();
+    SingleLiveEvent<SwitchToChartActivityVO> navigateToChartActivity = new SingleLiveEvent<>();
 
     MutableLiveData<UserMessage> userMessage = new MutableLiveData<>();
 
@@ -209,5 +210,10 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public void clearTokens() {
         preferencesStore.setTokens(null, null, -1);
+    }
+
+    public void navigateToChartActivity(StationType stationType, MeasurementType measurementType) {
+        SwitchToChartActivityVO switchToChartActivityVO = new SwitchToChartActivityVO(stationType, measurementType);
+        navigateToChartActivity.postValue(switchToChartActivityVO);
     }
 }

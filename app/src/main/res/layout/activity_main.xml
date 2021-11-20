@@ -6,10 +6,10 @@
     <data>
 
         <import type="android.view.View" />
+        <import type="com.github.kaiwinter.myatmo.main.MeasurementType" />
+        <import type="com.github.kaiwinter.myatmo.main.StationType" />
 
-        <variable
-                name="viewmodel"
-                type="com.github.kaiwinter.myatmo.main.MainActivityViewModel" />
+        <variable name="viewmodel" type="com.github.kaiwinter.myatmo.main.MainActivityViewModel" />
     </data>
 
     <androidx.coordinatorlayout.widget.CoordinatorLayout
@@ -84,7 +84,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
                             android:layout_weight="50"
-                            android:onClick="detailButtonClicked"
+                            android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_TEMPERATURE)}"
                             app:cardBackgroundColor="#f9f9f9"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
@@ -123,7 +123,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_weight="50"
-                            android:onClick="detailButtonClicked"
+                            android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_HUMIDITY)}"
                             app:cardBackgroundColor="#f9f9f9"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
@@ -173,7 +173,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
                             android:layout_weight="50"
-                            android:onClick="detailButtonClicked"
+                            android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_CO2)}"
                             app:cardBackgroundColor="#f9f9f9"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
@@ -248,7 +248,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginEnd="4dp"
                             android:layout_weight="50"
-                            android:onClick="detailButtonClicked"
+                            android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.OUTDOOR_STATION, MeasurementType.TYPE_TEMPERATURE)}"
                             app:cardBackgroundColor="#f9f9f9"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
@@ -287,7 +287,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginStart="4dp"
                             android:layout_weight="50"
-                            android:onClick="detailButtonClicked"
+                            android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.OUTDOOR_STATION, MeasurementType.TYPE_HUMIDITY)}"
                             app:cardBackgroundColor="#f9f9f9"
                             app:cardCornerRadius="8dp"
                             app:cardElevation="4dp"
