@@ -9,6 +9,7 @@ import android.view.View;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.ContextCompat;
 
 import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.rest.MeasureService;
@@ -193,7 +194,7 @@ public class ChartActivity extends AppCompatActivity {
     }
 
     private int hex2RGB(int colorId) {
-        int color = getResources().getColor(colorId);
+        int color = ContextCompat.getColor(getApplicationContext(), colorId);
         int r = Color.red(color);
         int g = Color.green(color);
         int b = Color.blue(color);
