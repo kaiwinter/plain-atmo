@@ -72,9 +72,9 @@
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
                         android:orientation="horizontal"
                         android:weightSum="100">
 
@@ -82,7 +82,7 @@
                             android:id="@+id/module1TemperatureCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_weight="50"
                             android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_TEMPERATURE)}"
                             app:cardBackgroundColor="#f9f9f9"
@@ -121,7 +121,7 @@
                             android:id="@+id/module1HumidityCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
+                            android:layout_marginStart="2dp"
                             android:layout_weight="50"
                             android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_HUMIDITY)}"
                             app:cardBackgroundColor="#f9f9f9"
@@ -148,6 +148,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"
+                                    android:maxLines="1"
                                     android:text="@string/humidity"
                                     android:textColor="#3C3C3C"
                                     android:textSize="16sp" />
@@ -161,9 +162,9 @@
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
                         android:orientation="horizontal"
                         android:weightSum="100">
 
@@ -171,7 +172,7 @@
                             android:id="@+id/module1Co2Card"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_weight="50"
                             android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_CO2)}"
                             app:cardBackgroundColor="#f9f9f9"
@@ -198,6 +199,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"
+                                    android:maxLines="1"
                                     android:text="@string/co2"
                                     android:textColor="#3C3C3C"
                                     android:textSize="16sp" />
@@ -236,9 +238,9 @@
                 <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginLeft="16dp"
-                        android:layout_marginTop="16dp"
-                        android:layout_marginRight="16dp"
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:layout_marginRight="10dp"
                         android:orientation="horizontal"
                         android:weightSum="100">
 
@@ -246,7 +248,7 @@
                             android:id="@+id/module2TemperatureCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginEnd="4dp"
+                            android:layout_marginEnd="2dp"
                             android:layout_weight="50"
                             android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.OUTDOOR_STATION, MeasurementType.TYPE_TEMPERATURE)}"
                             app:cardBackgroundColor="#f9f9f9"
@@ -273,6 +275,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"
+                                    android:maxLines="1"
                                     android:text="@string/temperature"
                                     android:textColor="#3C3C3C"
                                     android:textSize="16sp" />
@@ -285,7 +288,7 @@
                             android:id="@+id/module2HumidityCard"
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
-                            android:layout_marginStart="4dp"
+                            android:layout_marginStart="2dp"
                             android:layout_weight="50"
                             android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.OUTDOOR_STATION, MeasurementType.TYPE_HUMIDITY)}"
                             app:cardBackgroundColor="#f9f9f9"
@@ -312,6 +315,7 @@
                                     android:layout_width="wrap_content"
                                     android:layout_height="wrap_content"
                                     android:fontFamily="@font/calibri"
+                                    android:maxLines="1"
                                     android:text="@string/humidity"
                                     android:textColor="#3C3C3C"
                                     android:textSize="16sp" />
