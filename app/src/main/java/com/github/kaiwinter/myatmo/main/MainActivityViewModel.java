@@ -2,6 +2,7 @@ package com.github.kaiwinter.myatmo.main;
 
 import android.app.Application;
 import android.text.TextUtils;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
@@ -9,6 +10,8 @@ import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.MutableLiveData;
 
 import com.github.kaiwinter.myatmo.R;
+import com.github.kaiwinter.myatmo.chart.rest.MeasureService;
+import com.github.kaiwinter.myatmo.chart.rest.model.Measure;
 import com.github.kaiwinter.myatmo.login.AccessTokenManager;
 import com.github.kaiwinter.myatmo.main.rest.StationsDataService;
 import com.github.kaiwinter.myatmo.main.rest.model.Body;
@@ -20,8 +23,11 @@ import com.github.kaiwinter.myatmo.rest.ServiceGenerator;
 import com.github.kaiwinter.myatmo.storage.SharedPreferencesStore;
 import com.github.kaiwinter.myatmo.util.SingleLiveEvent;
 import com.github.kaiwinter.myatmo.util.UserMessage;
+import com.github.mikephil.charting.data.Entry;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -34,6 +40,12 @@ public class MainActivityViewModel extends AndroidViewModel {
 
     public MutableLiveData<ModuleVO> indoorModule = new MutableLiveData<>();
     public MutableLiveData<ModuleVO> outdoorModule = new MutableLiveData<>();
+
+    public MutableLiveData<List<Entry>> indoorModuleTemperatureChartValues = new MutableLiveData<>();
+    public MutableLiveData<List<Entry>> indoorModuleHumidityChartValues = new MutableLiveData<>();
+    public MutableLiveData<List<Entry>> indoorModuleCo2ChartValues = new MutableLiveData<>();
+    public MutableLiveData<List<Entry>> outdoorModuleTemperatureChartValues = new MutableLiveData<>();
+    public MutableLiveData<List<Entry>> outdoorModuleHumidityChartValues = new MutableLiveData<>();
 
     SingleLiveEvent<Void> navigateToLoginActivity = new SingleLiveEvent<>();
     SingleLiveEvent<String> navigateToRelogin = new SingleLiveEvent<>();
@@ -121,8 +133,10 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                 }
 
+                String outdoorModuleId = null;
                 if (modules.size() == 1) {
                     showOutdoorModuleData(modules.get(0));
+                    outdoorModuleId = modules.get(0).id;
 
                 } else if (modules.size() > 1) {
                     // FIXME: move to activity, remove Application from constructor
@@ -132,6 +146,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                         for (Module module : modules) {
                             if (module.id.equals(defaultIndoorModule)) {
                                 showOutdoorModuleData(module);
+                                outdoorModuleId = module.id;
                                 found = true;
                                 break;
                             }
@@ -145,6 +160,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     }
                 }
 
+                loadMiniCharts(device.id, outdoorModuleId);
             }
 
             private void askUserAboutDefaultIndoorModule(List<Module> modules) {
@@ -207,6 +223,77 @@ public class MainActivityViewModel extends AndroidViewModel {
             public void onFailure(Call<StationsData> call, Throwable t) {
                 userMessage.postValue(UserMessage.create(R.string.netatmo_connection_error, t.getMessage()));
                 hideLoadingState();
+            }
+        });
+    }
+
+    public void loadMiniCharts(String deviceId, String outdoorModuleId) {
+
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date startDate = calendar.getTime();
+
+        SharedPreferencesStore preferencesStore = new SharedPreferencesStore(getApplication());
+        MeasureService service = ServiceGenerator.createService(MeasureService.class);
+
+        Call<Measure> indoorModuleCall = service.getMeasure(
+                "Bearer " + preferencesStore.getAccessToken(),
+                deviceId,
+                null,
+                MeasurementType.SCALE_THIRTY_MINUTES.getApiString(),
+                MeasurementType.TYPE_TEMPERATURE.getApiString() + "," + MeasurementType.TYPE_HUMIDITY.getApiString() + "," + MeasurementType.TYPE_CO2.getApiString(),
+                (int) (startDate.getTime() / 1000),
+                false);
+        indoorModuleCall.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Measure> call, Response<Measure> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                Measure responseBody = response.body();
+
+                List<Entry> temperatureValues = responseBody.body.toEntry(0);
+                indoorModuleTemperatureChartValues.postValue(temperatureValues);
+
+                List<Entry> humidityValues = responseBody.body.toEntry(1);
+                indoorModuleHumidityChartValues.postValue(humidityValues);
+
+                List<Entry> co2Values = responseBody.body.toEntry(2);
+                indoorModuleCo2ChartValues.postValue(co2Values);
+            }
+
+            @Override
+            public void onFailure(Call<Measure> call, Throwable t) {
+                Log.e(MainActivityViewModel.class.getSimpleName(), "onFailure", t);
+            }
+        });
+
+        Call<Measure> outdoorModuleCall = service.getMeasure(
+                "Bearer " + preferencesStore.getAccessToken(),
+                deviceId,
+                outdoorModuleId,
+                MeasurementType.SCALE_THIRTY_MINUTES.getApiString(),
+                MeasurementType.TYPE_TEMPERATURE.getApiString() + "," + MeasurementType.TYPE_HUMIDITY.getApiString(),
+                (int) (startDate.getTime() / 1000),
+                false);
+        outdoorModuleCall.enqueue(new Callback<>() {
+            @Override
+            public void onResponse(Call<Measure> call, Response<Measure> response) {
+                if (!response.isSuccessful()) {
+                    return;
+                }
+                Measure responseBody = response.body();
+
+                List<Entry> temperatureValues = responseBody.body.toEntry(0);
+                outdoorModuleTemperatureChartValues.postValue(temperatureValues);
+
+                List<Entry> humidityValues = responseBody.body.toEntry(1);
+                outdoorModuleHumidityChartValues.postValue(humidityValues);
+            }
+
+            @Override
+            public void onFailure(Call<Measure> call, Throwable t) {
+                Log.e(MainActivityViewModel.class.getSimpleName(), "onFailure", t);
             }
         });
     }

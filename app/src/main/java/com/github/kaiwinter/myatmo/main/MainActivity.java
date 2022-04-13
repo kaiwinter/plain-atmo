@@ -12,7 +12,13 @@ import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.ChartActivity;
 import com.github.kaiwinter.myatmo.databinding.ActivityMainBinding;
 import com.github.kaiwinter.myatmo.login.LoginActivity;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.data.Entry;
+import com.github.mikephil.charting.data.LineData;
+import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.snackbar.Snackbar;
+
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ViewModelStoreOwner {
 
@@ -28,6 +34,12 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         binding = DataBindingUtil.setContentView(this, R.layout.activity_main);
         binding.setLifecycleOwner(this);
         binding.setViewmodel(viewModel);
+
+        prepareLineChart(binding.module1TemperatureChart);
+        prepareLineChart(binding.module1HumidityChart);
+        prepareLineChart(binding.module1Co2Chart);
+        prepareLineChart(binding.module2TemperatureChart);
+        prepareLineChart(binding.module2HumidityChart);
 
         viewModel.userMessage.observe(this, message -> Snackbar.make(binding.loadingIndicator, message.getMessage(this), Snackbar.LENGTH_LONG).show());
 
@@ -49,6 +61,49 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
                 showOutdoorChart(switchToChartActivityVO.getMeasurementType());
             }
         });
+
+        viewModel.indoorModuleTemperatureChartValues.observe(this, entries -> showLineData(entries, binding.module1TemperatureChart));
+        viewModel.indoorModuleHumidityChartValues.observe(this, entries -> showLineData(entries, binding.module1HumidityChart));
+        viewModel.indoorModuleCo2ChartValues.observe(this, entries -> showLineData(entries, binding.module1Co2Chart));
+        viewModel.outdoorModuleTemperatureChartValues.observe(this, entries -> showLineData(entries, binding.module2TemperatureChart));
+        viewModel.outdoorModuleHumidityChartValues.observe(this, entries -> showLineData(entries, binding.module2HumidityChart));
+    }
+
+    /**
+     * Setup the mini charts which are shown on the cards.
+     */
+    private void prepareLineChart(LineChart lineChart) {
+        lineChart.setNoDataText("");
+        lineChart.getDescription().setEnabled(false);
+
+        lineChart.getXAxis().setEnabled(false);
+
+        lineChart.getAxisLeft().setDrawGridLines(false);
+        lineChart.getAxisLeft().setDrawAxisLine(false);
+
+        lineChart.getAxisRight().setDrawGridLines(false);
+        lineChart.getAxisRight().setDrawAxisLine(false);
+
+        lineChart.getXAxis().setDrawGridLines(false);
+        lineChart.getLegend().setEnabled(false);
+
+        lineChart.setTouchEnabled(false);
+        lineChart.setViewPortOffsets(0f, 0f, 0f, 0f);
+    }
+
+    /**
+     * Show loaded data in the mini charts on the cards.
+     */
+    private void showLineData(List<Entry> entries, LineChart lineChart) {
+        LineDataSet dataSet = new LineDataSet(entries, null);
+        dataSet.setDrawFilled(true);
+        dataSet.setDrawCircles(false);
+        dataSet.setDrawValues(false);
+
+        LineData lineData = new LineData(dataSet);
+        lineChart.setData(lineData);
+
+        runOnUiThread(lineChart::invalidate);
     }
 
     @Override

@@ -8,6 +8,8 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BodyTypeAdapter extends TypeAdapter<Body> {
     public void write(JsonWriter out, Body value) {
@@ -30,14 +32,26 @@ public class BodyTypeAdapter extends TypeAdapter<Body> {
                 throw new IOException("Error parsing Measurement Body");
             }
             in.beginArray();
-            double nextDouble = in.nextDouble();
-            if (in.peek() != JsonToken.END_ARRAY) {
-                throw new IOException("Error parsing Measurement Body");
-            }
+            List<Double> doubles = new ArrayList<>();
+            do {
+                doubles.add(in.nextDouble());
+            } while (in.peek() != JsonToken.END_ARRAY);
+
+            body.measurements.add(new Measurement(Integer.parseInt(nextName), doublesToPrimitives(doubles)));
+
             in.endArray();
-            body.measurements.add(new Measurement(Integer.parseInt(nextName), nextDouble));
         }
         in.endObject();
         return body;
+    }
+
+    private double[] doublesToPrimitives(List<Double> data) {
+        double[] tempArray = new double[data.size()];
+        int i = 0;
+        for(Double d : data) {
+            tempArray[i] = d;
+            i++;
+        }
+        return tempArray;
     }
 }

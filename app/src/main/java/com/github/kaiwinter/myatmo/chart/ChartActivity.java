@@ -143,7 +143,7 @@ public class ChartActivity extends AppCompatActivity {
                 List<Entry> entries = new ArrayList<>();
                 List<Measurement> measurements = responseBody.body.measurements;
                 for (Measurement measurement : measurements) {
-                    entries.add(new Entry(measurement.beginTime, (float) measurement.value));
+                    entries.add(new Entry(measurement.beginTime, (float) measurement.value[0]));
                 }
 
                 LineDataSet dataSet = new LineDataSet(entries, getString(valueSupplier.getLabel()) + getString(R.string.chart_timespan));

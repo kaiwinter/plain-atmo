@@ -5,7 +5,7 @@ import com.github.kaiwinter.myatmo.R;
 /**
  * Supplies the value of a specific measurement parameter.
  */
-abstract class ValueSupplier {
+public abstract class ValueSupplier {
 
     /**
      * @return the label of this measurement parameter
@@ -20,7 +20,7 @@ abstract class ValueSupplier {
     /**
      * {@link ValueSupplier} implementation for temperature.
      */
-    static class TemperatureValueSupplier extends ValueSupplier {
+    public static class TemperatureValueSupplier extends ValueSupplier {
 
         @Override
         int getLabel() {
