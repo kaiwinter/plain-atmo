@@ -6,7 +6,7 @@ android {
     defaultConfig {
         applicationId "com.github.kaiwinter.myatmo"
         minSdkVersion 21 // Retrofit
-        targetSdkVersion 30
+        targetSdkVersion 31
         versionCode 26
         versionName "1.5.7-SNAPSHOT"
         testInstrumentationRunner 'androidx.test.runner.AndroidJUnitRunner'
