@@ -28,12 +28,14 @@ public class LoginActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         accessTokenManager = new AccessTokenManager(getApplicationContext());
+
+        binding.login.setOnClickListener(__ -> loginClicked());
     }
 
     /**
-     * Called from the login button defined in the XML.
+     * Called from the login button.
      */
-    public void loginClicked(View view) {
+    private void loginClicked() {
         String clientId = getString(R.string.client_id);
         if (TextUtils.isEmpty(clientId)) {
             binding.error.setText(R.string.missing_client_configuration);

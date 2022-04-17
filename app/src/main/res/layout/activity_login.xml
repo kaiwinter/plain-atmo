@@ -114,7 +114,6 @@
                             android:layout_margin="16dp"
                             android:background="@drawable/buttonshape"
                             android:fontFamily="@font/calibri"
-                            android:onClick="loginClicked"
                             android:text="@string/login_login_button"
                             android:textAllCaps="false"
                             android:textColor="#ffffff"
