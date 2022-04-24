@@ -85,13 +85,14 @@ public class AccessTokenManager {
      * @param onSuccess Runnable which is called on success
      * @param onError   Consumer which is called on an error, receives the error message
      */
-    public void refreshAccessToken(Runnable onSuccess, Consumer<String> onError) {
+    public void refreshAccessToken(Runnable onSuccess, Consumer<ServiceError> onError) {
         LoginService loginService = ServiceGenerator.createService(LoginService.class);
 
         String clientId = context.getString(R.string.client_id);
         String clientSecret = context.getString(R.string.client_secret);
         if (TextUtils.isEmpty(clientId) || TextUtils.isEmpty(clientSecret)) {
-            onError.accept(context.getString(R.string.missing_client_configuration));
+            ServiceError serviceError = new ServiceError(ServiceError.ErrorType.NEED_TO_RELOGIN, context.getString(R.string.missing_client_configuration));
+            onError.accept(serviceError);
             return;
         }
         String refreshToken = preferencesStore.getRefreshToken();
@@ -107,14 +108,16 @@ public class AccessTokenManager {
                 } else {
                     RestError.OauthError error = ServiceGenerator.parseOauthError(response);
                     String errormessage = context.getString(R.string.token_refresh_error, error.error) + " (" + response.code() + ")";
-                    onError.accept(errormessage);
+                    ServiceError serviceError = new ServiceError(ServiceError.ErrorType.NEED_TO_RELOGIN, errormessage);
+                    onError.accept(serviceError);
                 }
             }
 
             @Override
             public void onFailure(Call<AccessToken> call, Throwable t) {
                 String errormessage = context.getString(R.string.netatmo_connection_error, t.getMessage());
-                onError.accept(errormessage);
+                ServiceError serviceError = new ServiceError(ServiceError.ErrorType.MESSAGE_ONLY, errormessage);
+                onError.accept(serviceError);
             }
         });
     }

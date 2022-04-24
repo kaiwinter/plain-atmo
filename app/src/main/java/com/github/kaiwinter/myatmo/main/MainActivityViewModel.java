@@ -13,6 +13,7 @@ import com.github.kaiwinter.myatmo.R;
 import com.github.kaiwinter.myatmo.chart.rest.MeasureService;
 import com.github.kaiwinter.myatmo.chart.rest.model.Measure;
 import com.github.kaiwinter.myatmo.login.AccessTokenManager;
+import com.github.kaiwinter.myatmo.login.ServiceError;
 import com.github.kaiwinter.myatmo.main.rest.StationsDataService;
 import com.github.kaiwinter.myatmo.main.rest.model.Body;
 import com.github.kaiwinter.myatmo.main.rest.model.Device;
@@ -81,8 +82,12 @@ public class MainActivityViewModel extends AndroidViewModel {
         showLoadingState();
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
-                navigateToRelogin.postValue(errormessage);
+            accessTokenManager.refreshAccessToken(this::getdata, serviceError -> {
+                if (serviceError.getErrorType() == ServiceError.ErrorType.NEED_TO_RELOGIN) {
+                    navigateToRelogin.postValue(serviceError.getMessage());
+                } else {
+                    userMessage.postValue(UserMessage.create(serviceError.getMessage()));
+                }
                 hideLoadingState();
             });
             return;

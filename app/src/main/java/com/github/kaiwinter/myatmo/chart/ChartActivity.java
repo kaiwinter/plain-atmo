@@ -94,8 +94,9 @@ public class ChartActivity extends AppCompatActivity {
         runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.VISIBLE));
 
         if (accessTokenManager.accessTokenRefreshNeeded()) {
-            accessTokenManager.refreshAccessToken(this::getdata, errormessage -> {
-                Snackbar.make(binding.getRoot(), errormessage, Snackbar.LENGTH_LONG).show();
+            accessTokenManager.refreshAccessToken(this::getdata, serviceError -> {
+                // Always return to MainActivity, regardless of ServiceError type
+                Snackbar.make(binding.getRoot(), serviceError.getMessage(), Snackbar.LENGTH_LONG).show();
                 runOnUiThread(() -> binding.loadingIndicator.setVisibility(View.INVISIBLE));
                 finish(); // return to MainActivity for login
             });
