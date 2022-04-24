@@ -21,7 +21,8 @@ public class ServiceGenerator {
 
     public static <S> S createService(Class<S> serviceClass) {
         OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder()
-                .connectTimeout(25, TimeUnit.SECONDS);
+                .connectTimeout(60, TimeUnit.SECONDS)
+                .readTimeout(30, TimeUnit.SECONDS);
 
         if (BuildConfig.DEBUG) {
             HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
