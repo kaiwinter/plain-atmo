@@ -89,22 +89,14 @@
                             android:textColor="#000000"
                             android:textSize="16sp" />
 
-                    <fr.castorflex.android.smoothprogressbar.SmoothProgressBar
-                            android:id="@+id/loadingIndicator"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:indeterminate="true"
-                            android:visibility="invisible"
-                            app:spb_color="@color/colorPrimary"
-                            app:spb_mirror_mode="false"
-                            app:spb_progressiveStart_activated="true"
-                            app:spb_progressiveStart_speed="1.5"
-                            app:spb_progressiveStop_speed="3.4"
-                            app:spb_reversed="false"
-                            app:spb_sections_count="4"
-                            app:spb_speed="2.0"
-                            app:spb_stroke_separator_length="4dp"
-                            app:spb_stroke_width="4dp" />
+                    <ProgressBar
+                        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+                        android:id="@+id/loadingIndicator"
+                        android:visibility="invisible"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:indeterminate="true"
+                        android:indeterminateTint="@color/colorPrimary"/>
 
                     <Button
                             android:id="@+id/login"
