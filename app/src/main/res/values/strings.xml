@@ -4,7 +4,7 @@
     <string name="display_timestamp" translatable="false">(%1$s)</string>
     <string name="display_humidity" translatable="false">%1$,.0f%%</string>
     <string name="display_co2" translatable="false">%1$,.0fppm</string>
-    <string name="display_noise" translatable="false">%1$ddB</string>
+    <string name="display_noise" translatable="false">%1$,.0fdB</string>
     <string name="login_login">Netatmo Login</string>
     <string name="login_login_button">Login</string>
     <string name="login_login_error">Login error: %1$s</string>

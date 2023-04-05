@@ -202,7 +202,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     moduleVO.temperature = device.dashboardData.temperature;
                     moduleVO.humidity = device.dashboardData.humidity;
                     moduleVO.co2 = device.dashboardData.cO2;
-                    moduleVO.noise = device.dashboardData.noise;
+                    moduleVO.noise = Double.valueOf(device.dashboardData.noise);
                 }
 
                 indoorModule.postValue(moduleVO);
