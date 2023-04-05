@@ -64,4 +64,20 @@ public abstract class ValueSupplier {
             return R.string.display_co2;
         }
     }
+
+    /**
+     * {@link ValueSupplier} implementation for noise.
+     */
+    static class NoiseValueSupplier extends ValueSupplier {
+
+        @Override
+        int getLabel() {
+            return R.string.noise;
+        }
+
+        @Override
+        int formatStringId() {
+            return R.string.display_noise;
+        }
+    }
 }

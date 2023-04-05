@@ -114,6 +114,8 @@ public class ChartActivity extends AppCompatActivity {
             valueSupplier = new ValueSupplier.HumidityValueSupplier();
         } else if (measurementType == MeasurementType.TYPE_CO2) {
             valueSupplier = new ValueSupplier.CO2ValueSupplier();
+        } else if (measurementType == MeasurementType.TYPE_NOISE) {
+            valueSupplier = new ValueSupplier.NoiseValueSupplier();
         } else {
             finish();
             return;

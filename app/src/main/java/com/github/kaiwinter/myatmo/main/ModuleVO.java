@@ -13,6 +13,7 @@ public class ModuleVO {
     public Double temperature;
     public Double humidity;
     public Double co2;
+    public Integer noise;
 
     /**
      * @return the {@link #beginTime} in short String representation

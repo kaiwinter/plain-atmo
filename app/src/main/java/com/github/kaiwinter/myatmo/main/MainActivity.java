@@ -38,6 +38,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         prepareLineChart(binding.module1TemperatureChart);
         prepareLineChart(binding.module1HumidityChart);
         prepareLineChart(binding.module1Co2Chart);
+        prepareLineChart(binding.module1NoiseChart);
         prepareLineChart(binding.module2TemperatureChart);
         prepareLineChart(binding.module2HumidityChart);
 
@@ -65,6 +66,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.indoorModuleTemperatureChartValues.observe(this, entries -> showLineData(entries, binding.module1TemperatureChart));
         viewModel.indoorModuleHumidityChartValues.observe(this, entries -> showLineData(entries, binding.module1HumidityChart));
         viewModel.indoorModuleCo2ChartValues.observe(this, entries -> showLineData(entries, binding.module1Co2Chart));
+        viewModel.indoorModuleNoiseChartValues.observe(this, entries -> showLineData(entries, binding.module1NoiseChart));
         viewModel.outdoorModuleTemperatureChartValues.observe(this, entries -> showLineData(entries, binding.module2TemperatureChart));
         viewModel.outdoorModuleHumidityChartValues.observe(this, entries -> showLineData(entries, binding.module2HumidityChart));
     }

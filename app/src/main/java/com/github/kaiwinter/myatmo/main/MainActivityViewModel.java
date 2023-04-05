@@ -45,6 +45,7 @@ public class MainActivityViewModel extends AndroidViewModel {
     public MutableLiveData<List<Entry>> indoorModuleTemperatureChartValues = new MutableLiveData<>();
     public MutableLiveData<List<Entry>> indoorModuleHumidityChartValues = new MutableLiveData<>();
     public MutableLiveData<List<Entry>> indoorModuleCo2ChartValues = new MutableLiveData<>();
+    public MutableLiveData<List<Entry>> indoorModuleNoiseChartValues = new MutableLiveData<>();
     public MutableLiveData<List<Entry>> outdoorModuleTemperatureChartValues = new MutableLiveData<>();
     public MutableLiveData<List<Entry>> outdoorModuleHumidityChartValues = new MutableLiveData<>();
 
@@ -201,6 +202,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                     moduleVO.temperature = device.dashboardData.temperature;
                     moduleVO.humidity = device.dashboardData.humidity;
                     moduleVO.co2 = device.dashboardData.cO2;
+                    moduleVO.noise = device.dashboardData.noise;
                 }
 
                 indoorModule.postValue(moduleVO);
@@ -246,7 +248,7 @@ public class MainActivityViewModel extends AndroidViewModel {
                 deviceId,
                 null,
                 MeasurementType.SCALE_THIRTY_MINUTES.getApiString(),
-                MeasurementType.TYPE_TEMPERATURE.getApiString() + "," + MeasurementType.TYPE_HUMIDITY.getApiString() + "," + MeasurementType.TYPE_CO2.getApiString(),
+                MeasurementType.TYPE_TEMPERATURE.getApiString() + "," + MeasurementType.TYPE_HUMIDITY.getApiString() + "," + MeasurementType.TYPE_CO2.getApiString() + "," + MeasurementType.TYPE_NOISE.getApiString(),
                 (int) (startDate.getTime() / 1000),
                 false);
         indoorModuleCall.enqueue(new Callback<>() {
@@ -265,6 +267,9 @@ public class MainActivityViewModel extends AndroidViewModel {
 
                 List<Entry> co2Values = responseBody.body.toEntry(2);
                 indoorModuleCo2ChartValues.postValue(co2Values);
+
+                List<Entry> noiseValues = responseBody.body.toEntry(3);
+                indoorModuleNoiseChartValues.postValue(noiseValues);
             }
 
             @Override

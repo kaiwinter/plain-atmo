@@ -249,6 +249,61 @@
 
                     </androidx.cardview.widget.CardView>
 
+                    <androidx.cardview.widget.CardView
+                        android:id="@+id/module1NoiseCard"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="2dp"
+                        android:layout_weight="50"
+                        android:onClick="@{() -> viewmodel.navigateToChartActivity(StationType.INDOOR_STATION, MeasurementType.TYPE_NOISE)}"
+                        app:cardBackgroundColor="#f9f9f9"
+                        app:cardCornerRadius="8dp"
+                        app:cardElevation="4dp"
+                        app:cardUseCompatPadding="true">
+
+                        <RelativeLayout
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="bottom|center"
+                            android:orientation="vertical"
+                            android:weightSum="1">
+
+                            <com.github.mikephil.charting.charts.LineChart
+                                android:id="@+id/module1NoiseChart"
+                                android:layout_width="match_parent"
+                                android:layout_height="100dp" />
+
+                            <LinearLayout
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="16dp"
+                                android:layout_marginTop="16dp"
+                                android:layout_marginEnd="16dp"
+                                android:layout_marginBottom="16dp"
+                                android:orientation="vertical">
+
+                                <TextView
+                                    android:layout_width="match_parent"
+                                    android:layout_height="match_parent"
+                                    android:layout_marginTop="8dp"
+                                    android:layout_marginBottom="8dp"
+                                    android:text="@{viewmodel.indoorModule.noise == null ? @string/not_loaded : @string/display_noise(viewmodel.indoorModule.noise)}"
+                                    android:textSize="25sp" />
+
+
+                                <TextView
+                                    android:layout_width="wrap_content"
+                                    android:layout_height="wrap_content"
+                                    android:fontFamily="@font/calibri"
+                                    android:maxLines="1"
+                                    android:text="@string/noise"
+                                    android:textColor="#3C3C3C"
+                                    android:textSize="16sp" />
+
+                            </LinearLayout>
+                        </RelativeLayout>
+
+                    </androidx.cardview.widget.CardView>
                 </LinearLayout>
 
                 <LinearLayout

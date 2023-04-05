@@ -16,13 +16,7 @@ public enum MeasurementType {
     TYPE_CO2("CO2"),
     TYPE_HUMIDITY("Humidity"),
     TYPE_PRESSURE("Pressure"),
-    TYPE_NOISE("Noise"),
-    TYPE_RAIN("Rain"),
-    TYPE_RAIN_SUM("sum_rain"),
-    TYPE_WIND_ANGLE("WindAngle"),
-    TYPE_WIND_STRENGTH("WindStrength"),
-    TYPE_GUST_ANGLE("GustAngle"),
-    TYPE_GUST_STRENGTH("GustStrength");
+    TYPE_NOISE("Noise");
 
     private final String apiString;
 
