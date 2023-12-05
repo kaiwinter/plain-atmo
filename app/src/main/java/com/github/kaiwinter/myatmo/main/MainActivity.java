@@ -18,12 +18,15 @@ import com.github.mikephil.charting.data.LineData;
 import com.github.mikephil.charting.data.LineDataSet;
 import com.google.android.material.snackbar.Snackbar;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ViewModelStoreOwner {
 
     private ActivityMainBinding binding;
     private MainActivityViewModel viewModel;
+
+    private List<Snackbar> snackbarQueue = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +55,7 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
                 viewModel.clearTokens();
                 startLoginActivity();
             });
-            snackbar.show();
+            addToSnackbarQueue(snackbar);
         });
 
         viewModel.navigateToChartActivity.observe(this, switchToChartActivityVO -> {
@@ -69,6 +72,22 @@ public class MainActivity extends AppCompatActivity implements ViewModelStoreOwn
         viewModel.indoorModuleNoiseChartValues.observe(this, entries -> showLineData(entries, binding.module1NoiseChart));
         viewModel.outdoorModuleTemperatureChartValues.observe(this, entries -> showLineData(entries, binding.module2TemperatureChart));
         viewModel.outdoorModuleHumidityChartValues.observe(this, entries -> showLineData(entries, binding.module2HumidityChart));
+    }
+
+    private void addToSnackbarQueue(Snackbar snackbar) {
+        snackbar.addCallback(new Snackbar.Callback() {
+            @Override
+            public void onDismissed(Snackbar snackbar, int event) {
+                snackbarQueue.remove(snackbar);
+                if (!snackbarQueue.isEmpty()) {
+                    snackbarQueue.get(0).show();
+                }
+            }
+        });
+        snackbarQueue.add(snackbar);
+        if (snackbarQueue.size() == 1) {
+            snackbar.show();
+        }
     }
 
     /**

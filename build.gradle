@@ -4,13 +4,14 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:7.4.2'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.20'
+        classpath 'com.android.tools.build:gradle:8.2.0'
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.21'
     }
 }
 
 plugins {
-    id "com.github.ben-manes.versions" version "0.46.0"
+    id "com.github.ben-manes.versions" version "0.50.0"
+    id "idea"
 }
 
 allprojects {
@@ -33,5 +34,12 @@ dependencyUpdates.resolutionStrategy {
                 selection.reject('Release candidate')
             }
         }
+    }
+}
+
+idea {
+    module {
+        downloadJavadoc = false
+        downloadSources = true
     }
 }
